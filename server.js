@@ -1,18 +1,18 @@
 /**
  * Module dependencies.
  */
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var http = require('http');
-var path = require('path');
-
-var game = require('./game_files/game');
+var express = require('express'),
+	routes 	= require('./routes'),
+	http 	= require('http'),
+	path 	= require('path'),
+	Const   = require('./sharedConstants').constant,
+	
+	game 	= require('./game_files/game');
 
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 4242);
+app.set('port', Const.SERVER_PORT);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -36,6 +36,7 @@ app.get('/birds', function(req, res) {
     res.sendfile('./public/birds.html');
 });
 
+// Route to get shared const file
 app.get('/sharedConstants.js', function(req, res) {
     res.sendfile('sharedConstants.js');
 });

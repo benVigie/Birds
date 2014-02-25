@@ -8,10 +8,9 @@ var SPACE_BETWEEN_BIRDS_X   = 120;
 var START_BIRD_POS_Y        = 100;
 var SPACE_BETWEEN_BIRDS_Y   = 100;
 
-var Player = function (socket, uid, color, pos) {
+var Player = function (socket, uid, color) {
   var that   = {},
     _socket  = socket,
-    _state   = enums.PlayerState.OnLoginScreen,
     _gravity = 0.1;
     _speedJump = -1;
     _speedY  = 0;
@@ -19,21 +18,11 @@ var Player = function (socket, uid, color, pos) {
       id:     uid,
       nick:   '',
       color:  color,
+      score:  0,
       state:  enums.PlayerState.OnLoginScreen,
       posX:   0,
       posY:   0
     };
-
-  function setInitialPos(pos) {
-    var line,
-        col;
-
-    line = Math.floor(pos / MAX_BIRDS_IN_A_ROW);
-    col = Math.floor(pos % MAX_BIRDS_IN_A_ROW);
-    
-    _playerTinyObject.posY = START_BIRD_POS_Y + line * SPACE_BETWEEN_BIRDS_Y;
-    _playerTinyObject.posX = START_BIRD_POS_X + col * SPACE_BETWEEN_BIRDS_X;
-  }
 
   that.update = function (timeLapse) {
     // If player is still alive, update its Y position
@@ -80,9 +69,29 @@ var Player = function (socket, uid, color, pos) {
     return (_playerTinyObject);
   };
 
-  that.socket = _socket;
+  that.preparePlayer = function (pos) {
+    var line,
+        col;
 
-  setInitialPos(pos);
+    // Place bird on the departure grid :p
+    line = Math.floor(pos / MAX_BIRDS_IN_A_ROW);
+    col = Math.floor(pos % MAX_BIRDS_IN_A_ROW);    
+    _playerTinyObject.posY = START_BIRD_POS_Y + line * SPACE_BETWEEN_BIRDS_Y;
+    _playerTinyObject.posX = START_BIRD_POS_X + col * SPACE_BETWEEN_BIRDS_X;
+
+    // Reset usefull values
+    _speedY  = 0;
+    _playerTinyObject.score =  0;
+    _playerTinyObject.state = enums.PlayerState.WaintingInLobby;
+  };
+
+  that.sendScore = function () {
+    
+    _socket.emit('ranking', 1, 12);
+  };
+  
+
+  that.socket = _socket;
 
   return (that);
 };

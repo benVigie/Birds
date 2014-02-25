@@ -5,7 +5,8 @@ var util          = require('util'),
 
 var NB_AVAILABLE_BIRDS_COLOR = 1;
 
-var _playersList = new Array();
+var _playersList  = new Array(),
+    _posOnGrid    = 0;
 
 function PlayersManager () {
   EventEmitter.call(this);
@@ -21,7 +22,9 @@ PlayersManager.prototype.addNewPlayer = function (playerSocket, id) {
   birdColor = Math.floor(Math.random() * ((NB_AVAILABLE_BIRDS_COLOR - 1) + 1));
 
   // Create new player and add it in the list
-  newPlayer = new Player(playerSocket, id, birdColor, _playersList.length);
+  newPlayer = new Player(playerSocket, id, birdColor);
+  // Place him on the departure grid
+  newPlayer.preparePlayer(_posOnGrid++);
   _playersList.push(newPlayer);
 
   console.info('New player connected. There is currently ' + _playersList.length + ' player(s)');
@@ -106,13 +109,25 @@ PlayersManager.prototype.arePlayersStillAlive = function () {
   return (false);
 };
 
-PlayersManager.prototype.resetPlayerForNewGame = function () {
+PlayersManager.prototype.resetPlayersForNewGame = function () {
   var nbPlayers = _playersList.length,
       i;
 
+  // reset position counter
+  _posOnGrid = 0;
+
   for (i = 0; i < nbPlayers; i++) {
-    _playersList[i].setReadyState(false);
-    // TODO: replacer les joueurs sur la grille de depart
+    _playersList[i].preparePlayer(_posOnGrid++);
+  };
+};
+
+PlayersManager.prototype.sendPlayerScore = function () {
+  var nbPlayers = _playersList.length,
+      i;
+
+  // Send score
+  for (i = 0; i < nbPlayers; i++) {
+    _playersList[i].sendScore();
   };
 };
 

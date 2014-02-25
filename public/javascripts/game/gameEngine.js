@@ -22,6 +22,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _isCurrentPlayerReady = false,
       _userID = null,
       _lastTime = null,
+      _rankingTimer,
+      _ranking_time,
       socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
 
   function draw (currentTime, ellapsedTime) {
@@ -118,6 +120,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     socket.on('ranking', function (podium, playerScore) {
       console.log(podium);
       console.log(playerScore);
+      displayRanking(podium, playerScore);
     });
 
     // Send nickname to the server
@@ -139,6 +142,12 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     return (false);
   }
 
+  function displayRanking () {
+    showHideMenu(enumPanels.Ranking, true);
+    
+
+  }
+
   function changeGameState (gameState) {
     var strLog = 'Server just change state to ';
 
@@ -147,9 +156,10 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     switch (_gameState) {
       // If we 
       case enumState.WaitingRoom:
-        // _isCurrentPlayerReady = false;
-        // _playerManager.getCurrentPlayer().updateReadyState(_isCurrentPlayerReady);
         strLog += 'waiting in lobby';
+        _isCurrentPlayerReady = false;
+        // _playerManager.getCurrentPlayer().updateReadyState(_isCurrentPlayerReady);
+        draw(0, 0);
         break;
 
       case enumState.OnGame:
@@ -159,7 +169,16 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
       case enumState.Ranking:
         strLog += 'display ranking';
-        showHideMenu(enumPanels.Ranking, true);
+        // Start timer for next game
+        _ranking_time = Const.TIME_BETWEEN_GAMES / 1000;
+        _rankingTimer = window.setInterval(function() {
+            // Set seconds left
+            document.getElementById('gs-ranking-timer').innerHtml = _ranking_time--;
+            // Stop timer if time is running up
+            window.clearInterval(_rankingTimer);
+          },
+          1000
+        );
         break;
       
       default:

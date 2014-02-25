@@ -1,6 +1,7 @@
 // Define all constants usefull by the server and the client
 var constant = {
 
+  SERVER_PORT:              4242,
   SOCKET_PORT:              80,
   SOCKET_ADDR:              '127.0.0.1',
 
@@ -8,6 +9,7 @@ var constant = {
   SCREEN_HEIGHT:            768,
   FLOOR_POS_Y:              672,
   LEVEL_SPEED:              0.3,
+  TIME_BETWEEN_GAMES:       5000,
 
   BIRD_WIDTH:               85,
   BIRD_HEIGHT:              60,

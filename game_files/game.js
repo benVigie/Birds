@@ -68,12 +68,16 @@ function createNewGame () {
   _pipeManager.flushPipeList();
 
   // Reset players state
+  _playersManager.resetPlayersForNewGame();
 
   // Notify players of the new game state
   updateGameState(enums.ServerState.WaitingForPlayers, true);
 };
 
 function gameOver() {
+  var players,
+      i;
+
   // Stop game loop
   clearInterval(_timer);
   _lastTime = null;
@@ -81,10 +85,11 @@ function gameOver() {
   // Change server state
   updateGameState(enums.ServerState.Ranking, true);
 
-  // TODO: Send players score
+  // Send players score
+  _playersManager.sendPlayerScore();
 
   // After 5s, create a new game
-  setTimeout(createNewGame, 5000);
+  setTimeout(createNewGame, Const.TIME_BETWEEN_GAMES);
 };
 
 function startGameLoop () {
@@ -116,11 +121,11 @@ function startGameLoop () {
     _pipeManager.updatePipes(ellapsedTime);
 
     // Check collisions
-    /*if (CollisionEngine.checkCollision(_pipeManager.getPotentialPipeHit(), _playersManager.getPlayerList(enums.PlayerState.Playing)) == true) {
+    if (CollisionEngine.checkCollision(_pipeManager.getPotentialPipeHit(), _playersManager.getPlayerList(enums.PlayerState.Playing)) == true) {
       if (_playersManager.arePlayersStillAlive() == false) {
         gameOver();
       }
-    }*/
+    }
 
     // Notify players
     io.sockets.emit('game_loop_update', { players: _playersManager.getPlayerList(), pipes: _pipeManager.getPipeList()});

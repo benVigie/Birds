@@ -7,7 +7,6 @@ var enumServerState = {
 var enumPlayerState = {
   OnLoginScreen: 1,
   WaintingInLobby: 2,
-  //Ready: 3,
   Playing: 4,
   Died: 5
 };
