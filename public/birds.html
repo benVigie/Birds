@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <link href="/images/favicon.ico" rel="icon" type="image/ico" />
+    <meta charset='utf-8'>
+    <title>Birds.js</title>
+
+    <link href="stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+
+    <script src="http://127.0.0.1:80/socket.io/socket.io.js"></script>
+    <!-- <script src="http://172.21.204.213:1337/socket.io/socket.io.js"></script> -->
+    <script data-main="javascripts/game/gameEngine" src="javascripts/lib/require.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <div id="gameScreen">
+      
+      <canvas id="gs-canvas" width="900" height="768"></canvas>
+      
+      <div id="gs-login" class="inGamePanel">
+        <h1>Birds.js</h1>
+
+        <input type="text" id="player-name" maxlength="8" value="Player_1" />
+        <input type="button" id="player-connection" value="Play !" />
+      
+      </div>
+
+      <div id="gs-ranking" class="inGamePanel">
+        
+      </div>
+
+      <div id="gs-error" class="inGamePanel">
+        <h1 id="gs-error-title">Ouuuuuups :(</h1>
+        <h2 id="gs-error-message">Something goes wrong. Please reload the page</h2>
+      </div>
+
+    </div>
+
+
+    <script>
+
+    </script>
+
+  </body>
+
+</html>
