@@ -55,7 +55,7 @@ var Player = function (socket, uid, color) {
   };
 
   that.setReadyState = function (readyState) {
-    _playerTinyObject.state = (readyState == true) ? enums.PlayerState.Playing : enums.PlayerState.WaintingInLobby;
+    _playerTinyObject.state = (readyState == true) ? enums.PlayerState.Playing : enums.PlayerState.WaitingInLobby;
     console.info(_playerTinyObject.nick + ' is ' + ((_playerTinyObject.state == enums.PlayerState.Playing) ? 'ready !' : 'not yet ready'));
   };
 
@@ -82,7 +82,7 @@ var Player = function (socket, uid, color) {
     // Reset usefull values
     _speedY  = 0;
     _playerTinyObject.score =  0;
-    _playerTinyObject.state = enums.PlayerState.WaintingInLobby;
+    _playerTinyObject.state = enums.PlayerState.WaitingInLobby;
   };
 
   that.sendScore = function () {

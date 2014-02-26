@@ -61,7 +61,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       
       // Bind disconnect event
       socket.on('disconnect', function() {
-        document.getElementById('gs-error-message').innerHtml = 'Connection with the server lost';
+        document.getElementById('gs-error-message').innerHTML = 'Connection with the server lost';
         showHideMenu(enumPanels.Error, true);
         console.log('Connection with the server lost :( ');
       });
@@ -74,7 +74,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     });
 
     socket.on('connect_failed', function() {
-      document.getElementById('gs-error-message').innerHtml = 'Fail to connect the websocket';
+      document.getElementById('gs-error-message').innerHTML = 'Fail to connect the websocket';
       showHideMenu(enumPanels.Error, true);
       console.log('Cannot connect the websocket ');
     });
@@ -92,15 +92,16 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       var nb = playersList.length,
           i;
 
+      // Add this player in the list
       for (i = 0; i <nb; i++) {
         _playerManager.addPlayer(playersList[i], _userID);
       };
 
+      // Redraw
       draw(0, 0);
-
     });
     socket.on('player_disconnect', function (player) {
-        _playerManager.removePlayer(player);
+      _playerManager.removePlayer(player);
       draw(0, 0);
     });
     socket.on('new_player', function (player) {
@@ -143,9 +144,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   }
 
   function displayRanking () {
+    // Show menu
     showHideMenu(enumPanels.Ranking, true);
-    
-
   }
 
   function changeGameState (gameState) {
@@ -158,7 +158,6 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       case enumState.WaitingRoom:
         strLog += 'waiting in lobby';
         _isCurrentPlayerReady = false;
-        // _playerManager.getCurrentPlayer().updateReadyState(_isCurrentPlayerReady);
         draw(0, 0);
         break;
 
@@ -171,11 +170,21 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
         strLog += 'display ranking';
         // Start timer for next game
         _ranking_time = Const.TIME_BETWEEN_GAMES / 1000;
+        timerNode = document.getElementById('gs-ranking-timer');
+        timerNode.innerHTML = (_ranking_time).toString();
         _rankingTimer = window.setInterval(function() {
             // Set seconds left
-            document.getElementById('gs-ranking-timer').innerHtml = _ranking_time--;
+            timerNode.innerHTML = (--_ranking_time).toString();
+
             // Stop timer if time is running up
-            window.clearInterval(_rankingTimer);
+            if (_ranking_time <= 0) {
+              // Reset timer
+              window.clearInterval(_rankingTimer);
+              
+              // Reset pipe list and hide ranking panel
+              _pipeList = new Array();
+              showHideMenu(enumPanels.Ranking, false);
+            }
           },
           1000
         );
@@ -200,9 +209,6 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       case enumState.OnGame:
         socket.emit('player_jump');
         break;
-      case enumState.Ranking:
-
-        break;
       default:
         break;
     }
@@ -214,12 +220,12 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     if (isShow) {
       if (currentOverlayPanel)
-        currentOverlayPanel.remove('overlay');
+        currentOverlayPanel.classList.remove('overlay');
       panel.classList.add('overlay');
     }
     else {
       if (currentOverlayPanel)
-        currentOverlayPanel.remove('overlay');
+        currentOverlayPanel.classList.remove('overlay');
     }
   }
 

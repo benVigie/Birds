@@ -64,11 +64,17 @@ function updateGameState (newState, notifyClients) {
 }
 
 function createNewGame () {
+  var players,
+      i;
+
   // Flush pipe list
   _pipeManager.flushPipeList();
 
-  // Reset players state
-  _playersManager.resetPlayersForNewGame();
+  // Reset players state and send it
+  players = _playersManager.resetPlayersForNewGame();
+  /*for (i = 0; i < players.length; i++) {
+    io.sockets.emit('player_ready_state', players[i]);
+  };*/
 
   // Notify players of the new game state
   updateGameState(enums.ServerState.WaitingForPlayers, true);

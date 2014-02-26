@@ -58,8 +58,8 @@ define(['playerEntity'], function (Player) {
         i;
 
     for (i = 0; i < nbPlayers; i++) {
-      if (_playersList[i].getId() === playerID)
-        return (_playersList[i]);
+      if (_playerList[i].getId() === playerID)
+        return (_playerList[i]);
     };
 
     console.log("Can't find player in list");

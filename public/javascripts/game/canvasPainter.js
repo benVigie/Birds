@@ -1,7 +1,7 @@
 /*
 *   Class to manage the canvas. Draw players, backgrounds, etc...  
 */
-define(['parallax', 'backgroundressources'], function (Parallax, bgRessources) {
+define(['parallax', 'backgroundressources', '../../sharedConstants'], function (Parallax, bgRessources, Const) {
 
   var HEIGHT_BETWEEN_PIPES    = 150;
   var NB_RESSOURCES_TO_LOAD   = 2;
@@ -15,8 +15,9 @@ define(['parallax', 'backgroundressources'], function (Parallax, bgRessources) {
       _isReadyToDraw = false,
 
       // Ressources
-      _nbRessources = NB_RESSOURCES_TO_LOAD + BIRDS_SPRITES.length + BACKGROUNDS.length,
+      _nbRessourcesToLoad = 0,
       _picGround,
+      _parallaxGround,
       _picPipe,
       _picBG = new Array();
       _picBirds = new Array();
@@ -65,7 +66,8 @@ define(['parallax', 'backgroundressources'], function (Parallax, bgRessources) {
     }
 
     // Last but not least, draw ground
-    ctx.drawImage(_picGround, 0, 672, 900, 96);
+    // ctx.drawImage(_picGround, 0, 672, 900, 96);
+    _parallaxGround.draw(ctx, currentTime);
   };
 
   that.loadRessources = function (onReadyCallback) {
@@ -74,17 +76,21 @@ define(['parallax', 'backgroundressources'], function (Parallax, bgRessources) {
         i;
 
     // Load ground
+    _nbRessourcesToLoad++;
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
     _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
+    _parallaxGround = new Parallax(_picGround, 900, 96, Const.LEVEL_SPEED, 672, Const.SCREEN_WIDTH);
 
     // Load pipe
+    _nbRessourcesToLoad++;
     _picPipe = new Image();
     _picPipe.src = 'images/pipe.png';
     _picPipe.onload = function() { onRessourceLoaded(onReadyCallback); };    
 
     // Load birds sprites
     for (i = 0; i < BIRDS_SPRITES.length; i++) {
+      _nbRessourcesToLoad++;
       bird = new Image();
       bird.src = BIRDS_SPRITES[i];
       bird.onload = function() { onRessourceLoaded(onReadyCallback); };
@@ -95,17 +101,18 @@ define(['parallax', 'backgroundressources'], function (Parallax, bgRessources) {
     // Load Backgrounds
     // Be carefull, the position in the array matters. First add, first draw !
     for (i = 0; i < BACKGROUNDS.length; i++) {
+      _nbRessourcesToLoad++;
       bg = new Image();
       bg.src = BACKGROUNDS[i].src;
       bg.onload = function() { onRessourceLoaded(onReadyCallback); };
       
       // Create a parallax obj with this ressource and add it in the bg array
-      _picBG.push(new Parallax(bg, BACKGROUNDS[i].width, BACKGROUNDS[i].height, BACKGROUNDS[i].speed, BACKGROUNDS[i].posY, 900));
+      _picBG.push(new Parallax(bg, BACKGROUNDS[i].width, BACKGROUNDS[i].height, BACKGROUNDS[i].speed, BACKGROUNDS[i].posY, Const.SCREEN_WIDTH));
     };
 
 
     function onRessourceLoaded (onReadyCallback) {
-      if (--_nbRessources <= 0) {
+      if (--_nbRessourcesToLoad <= 0) {
         _isReadyToDraw = true;
         onReadyCallback();
       }

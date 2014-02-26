@@ -23,6 +23,7 @@ PlayersManager.prototype.addNewPlayer = function (playerSocket, id) {
 
   // Create new player and add it in the list
   newPlayer = new Player(playerSocket, id, birdColor);
+  
   // Place him on the departure grid
   newPlayer.preparePlayer(_posOnGrid++);
   _playersList.push(newPlayer);
@@ -111,14 +112,18 @@ PlayersManager.prototype.arePlayersStillAlive = function () {
 
 PlayersManager.prototype.resetPlayersForNewGame = function () {
   var nbPlayers = _playersList.length,
-      i;
+      i,
+      updatedList = new Array();
 
   // reset position counter
   _posOnGrid = 0;
 
   for (i = 0; i < nbPlayers; i++) {
     _playersList[i].preparePlayer(_posOnGrid++);
+    updatedList.push(_playersList[i].getPlayerObject());
   };
+
+  return (updatedList);
 };
 
 PlayersManager.prototype.sendPlayerScore = function () {

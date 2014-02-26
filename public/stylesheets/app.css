@@ -57,7 +57,7 @@ canvas {
 .overlay {
 	position: absolute;
 
-	top: 0;
+	top: 0%;
 }
 
 #gs-error {
@@ -77,11 +77,7 @@ input[type="text"] {
 	
 	font-size: 50px;
 	font-family: 'mini_pixel';
-	text-shadow: 2px 2px 0px #E36116;/*,
-					5px 0px 0px black,
-					-5px 0px 0px black,
-					0px -5px 0px black,
-					0px 5px 0px black;*/
+	text-shadow: 2px 2px 0px #E36116;
 	color: #FFA24A;
 	text-align: center;
 	background: transparent;
