@@ -66,8 +66,10 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     }
 
     // Last but not least, draw ground
-    // ctx.drawImage(_picGround, 0, 672, 900, 96);
-    _parallaxGround.draw(ctx, currentTime);
+    if (pipes)
+      _parallaxGround.draw(ctx, currentTime);
+    else
+      _parallaxGround.draw(ctx, 0);
   };
 
   that.loadRessources = function (onReadyCallback) {
@@ -79,7 +81,7 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
     _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
-    _parallaxGround = new Parallax(_picGround, 900, 96, Const.LEVEL_SPEED, 672, Const.SCREEN_WIDTH);
+    _parallaxGround = new Parallax(_picGround, 900, 96, Const.LEVEL_SPEED / 1000, 672, Const.SCREEN_WIDTH);
 
     // Load pipe
     _picPipe = new Image();
@@ -108,9 +110,14 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
 
 
     function onRessourceLoaded (onReadyCallback) {
+      var totalRessources = NB_RESSOURCES_TO_LOAD + BACKGROUNDS.length + BIRDS_SPRITES.length;
+      
       if (--_nbRessourcesToLoad <= 0) {
         _isReadyToDraw = true;
         onReadyCallback();
+      }
+      else {
+        document.getElementById('gs-loader-text').innerHTML = ('Load ressource ' + (totalRessources - _nbRessourcesToLoad) + ' / ' + totalRessources);
       }
     };
 

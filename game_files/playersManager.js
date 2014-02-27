@@ -1,6 +1,5 @@
 var util          = require('util'),
     EventEmitter  = require('events').EventEmitter,
-    // Player        = require('./player').createNewPlayer,
     Player        = require('./player'),
     enums         = require('./enums');
 
@@ -57,6 +56,7 @@ PlayersManager.prototype.changeLobbyState = function (player, isReady) {
     _playersList[pos].setReadyState(isReady);
   }
 
+  debugger
   // PlayersManager check if players are ready
   for (i = 0; i < nbPlayers; i++) {
     // if at least one player doesn't ready, return
@@ -91,7 +91,6 @@ PlayersManager.prototype.updatePlayers = function (time) {
   var nbPlayers = _playersList.length,
       i;
 
-  debugger
   for (i = 0; i < nbPlayers; i++) {
     _playersList[i].update(time);
   };

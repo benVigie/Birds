@@ -7,8 +7,8 @@ var enumServerState = {
 var enumPlayerState = {
   OnLoginScreen: 1,
   WaitingInLobby: 2,
-  Playing: 4,
-  Died: 5
+  Playing: 3,
+  Died: 4
 };
 
 exports.PlayerState = enumPlayerState;

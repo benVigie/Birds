@@ -51,12 +51,25 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     draw(now, ellapsedTime);
   }
 
+  function lobbyLoop() {
+    var now = new Date().getTime();
+
+    // Call for next anim frame
+    if (_gameState == enumState.WaitingRoom)
+      requestAnimationFrame(lobbyLoop);
+
+    // Call draw with the ellapsed time between the last frame and the current one
+    draw(now, 0);
+  }
+
+
   function startClient () {
 
     _playerManager = new PlayersManager();
 
-    // _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
-    _socket = io.connect('http://172.21.204.213:80', { reconnect: false });
+    document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
+    _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
+    // _socket = io.connect('http://172.21.204.213:80', { reconnect: false });
     _socket.on('connect', function() {
       
       console.log('Connection established :)');
@@ -75,8 +88,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   
     });
 
-    _socket.on('connect_failed', function() {
-      document.getElementById('gs-error-message').innerHTML = 'Fail to connect the web_socket';
+    _socket.on('error', function() {
+      document.getElementById('gs-error-message').innerHTML = 'Fail to connect the WebSocket to the server.<br/><br/>Please check the WS address.';
       showHideMenu(enumPanels.Error, true);
       console.log('Cannot connect the web_socket ');
     });
@@ -107,11 +120,9 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     });
     _socket.on('player_disconnect', function (player) {
       _playerManager.removePlayer(player);
-      draw(0, 0);
     });
     _socket.on('new_player', function (player) {
       _playerManager.addPlayer(player);
-      draw(0, 0);
     });
     _socket.on('player_ready_state', function (playerInfos) {
       _playerManager.getPlayerFromId(playerInfos.id).updateFromServer(playerInfos);
@@ -163,7 +174,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       case enumState.WaitingRoom:
         strLog += 'waiting in lobby';
         _isCurrentPlayerReady = false;
-        draw(0, 0);
+        lobbyLoop();
+        // draw(0, 0);
         break;
 
       case enumState.OnGame:
@@ -187,7 +199,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
               window.clearInterval(_rankingTimer);
               
               // Reset pipe list and hide ranking panel
-              _pipeList = new Array();
+              _pipeList = null;
               showHideMenu(enumPanels.Ranking, false);
             }
           },

@@ -69,6 +69,33 @@ canvas {
 	margin-top: 80px;
 }
 
+#gs-loader-anim-box {
+	position: absolute;
+	top: 200px;
+	width: 100%;
+	text-align: center;
+	animation: boxMove 1s ease alternate infinite;
+	-webkit-animation: boxMove 1s ease alternate infinite;
+}
+
+#gs-loader-anim-bird {
+	display: inline-block;
+	width: 85px;
+	height: 60px;
+	background: url('../images/clumsy.png');
+	background-position: 0 0;
+	animation: birdFly 300ms steps(3, end) infinite;
+	-webkit-animation: birdFly 300ms steps(2, end) infinite;
+}
+#gs-loader-text {
+	position: absolute;
+	width: 100%;
+	top: 340px;
+	color: white;
+	font-size: 35px;
+	text-align: center
+}
+
 input[type="text"] {
 	display: block;
 	width: 160px;
@@ -102,4 +129,25 @@ input[type="button"] {
 				inset 3px 0px 0px 0px white,
 				inset -3px 0px 0px 0px white,
 				inset 0px -3px 0px 0px white;
+}
+
+@keyframes boxMove
+{
+	from {top: 200px;}
+	to {top: 150px;}
+}
+@-webkit-keyframes boxMove
+{
+	from {top: 200px;}
+	to {top: 150px;}
+}
+@keyframes birdFly
+{
+	from {background-position: 0;}
+	to {background-position: 170px;}
+}
+@-webkit-keyframes birdFly
+{
+	from {background-position: 0;}
+	to {background-position: 170px;}
 }

@@ -13,27 +13,31 @@ define(['playerEntity'], function (Player) {
   };
 
   PlayerManager.prototype.addPlayer = function (infos, playerID) {
+    // Create a player and push it into the player list
     var player = new Player(infos, playerID);
 
     _playerList.push(player);
+    // Add his ID in _keyMatching. WIth that, synchro with the server will be quick
+    // because we will don't need to iterate the player list to update it
     _keyMatching[infos.id] = _playerList.length - 1;
 
     if (player.isCurrentPlayer() == true)
       _currentPlayer = _playerList.length - 1;
-  };
+  }; 
 
   PlayerManager.prototype.removePlayer = function (player) {
-    var pos = _playerList.indexOf(player);
-
-    if (pos < 0) {
+    var pos = _keyMatching[player.id];
+  
+    if (typeof pos == 'undefined') {
       console.log("Can't find the disconected player in list");
     }
     else {
+      console.log('Removing ' + _playerList[pos].getNick());
+      // Remove player from lists
       _playerList.splice(pos, 1);
-
-      if (pos < _currentPlayer)
-        --_currentPlayer;
+      // delete _keyMatching[player.id];
     }
+  
   };
 
   PlayerManager.prototype.updatePlayerListFromServer = function (playerlistUpdated) {

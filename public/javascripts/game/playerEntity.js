@@ -6,8 +6,8 @@ define( function() {
   var enumPlayerState = {
     Unset: 1,
     WaintingInLobby: 2,
-    Ready: 3,
-    Playing: 4
+    Playing: 3,
+    Died: 4
   };
 
   var BIRD_HEIGHT = 60;
@@ -26,20 +26,31 @@ define( function() {
     };
 
     Player.prototype.draw = function (ctx, time, spriteList) {
-      var frameNumber;
+      var frameNumber,
+          nickPos;
 
       if (this._isMe === false) {
+        // Draw player name
         ctx.globalAlpha = 0.6;
+        ctx.font = '25px mini_pixel';
+        ctx.fillStyle = '#FFA24A';
+        nickPos = this._serverInfos.posX + (BIRD_WIDTH / 2) - (ctx.measureText(this._serverInfos.nick).width / 2);
+        ctx.fillText(this._serverInfos.nick, nickPos, this._serverInfos.posY - 20);
       }
 
-      // if player is waiting (!= ready), just draw the bird pic
-      if (this._serverInfos.state == enumPlayerState.WaintingInLobby) {
-        ctx.drawImage(spriteList[this._serverInfos.color], 0, 0, BIRD_WIDTH, BIRD_HEIGHT, this._serverInfos.posX, this._serverInfos.posY, BIRD_WIDTH, BIRD_HEIGHT);
+      if (this._serverInfos.state == enumPlayerState.Unset) {
+        return;
       }
-      // If he is ready or in game, animate the bird !
       else {
-        frameNumber = Math.round(time / COMPLETE_ANNIMATION_DURATION) % ANIMATION_FRAME_NUMBER;
-        ctx.drawImage(spriteList[this._serverInfos.color], frameNumber * BIRD_WIDTH, 0, BIRD_WIDTH, BIRD_HEIGHT, this._serverInfos.posX, this._serverInfos.posY, BIRD_WIDTH, BIRD_HEIGHT);
+        // Finally draw bird
+        if (this._serverInfos.state == enumPlayerState.WaintingInLobby) {
+          ctx.drawImage(spriteList[this._serverInfos.color], 0, 0, BIRD_WIDTH, BIRD_HEIGHT, this._serverInfos.posX, this._serverInfos.posY, BIRD_WIDTH, BIRD_HEIGHT);
+        }
+        // If he is ready or in game, animate the bird !
+        else {
+          frameNumber = Math.round(time / COMPLETE_ANNIMATION_DURATION) % ANIMATION_FRAME_NUMBER;
+          ctx.drawImage(spriteList[this._serverInfos.color], frameNumber * BIRD_WIDTH, 0, BIRD_WIDTH, BIRD_HEIGHT, this._serverInfos.posX, this._serverInfos.posY, BIRD_WIDTH, BIRD_HEIGHT);
+        }
       }
 
       if (this._isMe === false) {
@@ -57,6 +68,10 @@ define( function() {
 
     Player.prototype.getId = function () {
       return (this._serverInfos.id);
+    };
+
+    Player.prototype.getNick = function () {
+      return (this._serverInfos.nick);
     };
 
     Player.prototype.updateReadyState = function (readyState) {
