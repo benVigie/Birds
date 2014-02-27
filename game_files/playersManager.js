@@ -1,6 +1,7 @@
 var util          = require('util'),
     EventEmitter  = require('events').EventEmitter,
-    Player        = require('./player').createNewPlayer,
+    // Player        = require('./player').createNewPlayer,
+    Player        = require('./player'),
     enums         = require('./enums');
 
 var NB_AVAILABLE_BIRDS_COLOR = 1;
@@ -23,9 +24,6 @@ PlayersManager.prototype.addNewPlayer = function (playerSocket, id) {
 
   // Create new player and add it in the list
   newPlayer = new Player(playerSocket, id, birdColor);
-  
-  // Place him on the departure grid
-  newPlayer.preparePlayer(_posOnGrid++);
   _playersList.push(newPlayer);
 
   console.info('New player connected. There is currently ' + _playersList.length + ' player(s)');
@@ -49,8 +47,6 @@ PlayersManager.prototype.removePlayer = function (player) {
 PlayersManager.prototype.changeLobbyState = function (player, isReady) {
   var pos = _playersList.indexOf(player),
       nbPlayers = _playersList.length,
-      nbPlayersReady = 0,
-      startGame = true,
       i;
 
   if (pos < 0) {
@@ -64,8 +60,10 @@ PlayersManager.prototype.changeLobbyState = function (player, isReady) {
   // PlayersManager check if players are ready
   for (i = 0; i < nbPlayers; i++) {
     // if at least one player doesn't ready, return
-    if (_playersList[i].getState() == enums.PlayerState.WaintingInLobby)
+    if (_playersList[i].getState() == enums.PlayerState.WaitingInLobby) {
+      console.info(_playersList[i].getNick() + " is not yet ready, don't start game");
       return;
+    }
   };
 
   // else raise the start game event !
@@ -93,6 +91,7 @@ PlayersManager.prototype.updatePlayers = function (time) {
   var nbPlayers = _playersList.length,
       i;
 
+  debugger
   for (i = 0; i < nbPlayers; i++) {
     _playersList[i].update(time);
   };
@@ -134,6 +133,10 @@ PlayersManager.prototype.sendPlayerScore = function () {
   for (i = 0; i < nbPlayers; i++) {
     _playersList[i].sendScore();
   };
+};
+
+PlayersManager.prototype.addPlayerOnStartGrid = function (player) {
+  player.preparePlayer(_posOnGrid++);
 };
 
 

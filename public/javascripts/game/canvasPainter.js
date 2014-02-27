@@ -15,7 +15,7 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
       _isReadyToDraw = false,
 
       // Ressources
-      _nbRessourcesToLoad = 0,
+      _nbRessourcesToLoad = NB_RESSOURCES_TO_LOAD + BACKGROUNDS.length + BIRDS_SPRITES.length,
       _picGround,
       _parallaxGround,
       _picPipe,
@@ -76,21 +76,18 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
         i;
 
     // Load ground
-    _nbRessourcesToLoad++;
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
     _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
     _parallaxGround = new Parallax(_picGround, 900, 96, Const.LEVEL_SPEED, 672, Const.SCREEN_WIDTH);
 
     // Load pipe
-    _nbRessourcesToLoad++;
     _picPipe = new Image();
     _picPipe.src = 'images/pipe.png';
     _picPipe.onload = function() { onRessourceLoaded(onReadyCallback); };    
 
     // Load birds sprites
     for (i = 0; i < BIRDS_SPRITES.length; i++) {
-      _nbRessourcesToLoad++;
       bird = new Image();
       bird.src = BIRDS_SPRITES[i];
       bird.onload = function() { onRessourceLoaded(onReadyCallback); };
@@ -101,7 +98,6 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     // Load Backgrounds
     // Be carefull, the position in the array matters. First add, first draw !
     for (i = 0; i < BACKGROUNDS.length; i++) {
-      _nbRessourcesToLoad++;
       bg = new Image();
       bg.src = BACKGROUNDS[i].src;
       bg.onload = function() { onRessourceLoaded(onReadyCallback); };

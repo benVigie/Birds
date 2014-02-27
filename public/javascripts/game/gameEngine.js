@@ -24,7 +24,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _lastTime = null,
       _rankingTimer,
       _ranking_time,
-      socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
+      _socket;
 
   function draw (currentTime, ellapsedTime) {
     canvasPainter.draw(currentTime, ellapsedTime, _playerManager.getPlayers(), _pipeList);
@@ -55,12 +55,14 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     _playerManager = new PlayersManager();
 
-    socket.on('connect', function() {
+    // _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
+    _socket = io.connect('http://172.21.204.213:80', { reconnect: false });
+    _socket.on('connect', function() {
       
       console.log('Connection established :)');
       
       // Bind disconnect event
-      socket.on('disconnect', function() {
+      _socket.on('disconnect', function() {
         document.getElementById('gs-error-message').innerHTML = 'Connection with the server lost';
         showHideMenu(enumPanels.Error, true);
         console.log('Connection with the server lost :( ');
@@ -73,10 +75,10 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   
     });
 
-    socket.on('connect_failed', function() {
-      document.getElementById('gs-error-message').innerHTML = 'Fail to connect the websocket';
+    _socket.on('connect_failed', function() {
+      document.getElementById('gs-error-message').innerHTML = 'Fail to connect the web_socket';
       showHideMenu(enumPanels.Error, true);
-      console.log('Cannot connect the websocket ');
+      console.log('Cannot connect the web_socket ');
     });
     
   }
@@ -87,8 +89,11 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     if (nick == '')
       return (false);
 
-    // Bind new events
-    socket.on('player_list', function (playersList) {
+    // Unbind button event to prevent "space click"
+    document.getElementById('player-connection').onclick = function() { return false; };
+
+    // Bind new socket events
+    _socket.on('player_list', function (playersList) {
       var nb = playersList.length,
           i;
 
@@ -100,25 +105,25 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       // Redraw
       draw(0, 0);
     });
-    socket.on('player_disconnect', function (player) {
+    _socket.on('player_disconnect', function (player) {
       _playerManager.removePlayer(player);
       draw(0, 0);
     });
-    socket.on('new_player', function (player) {
+    _socket.on('new_player', function (player) {
       _playerManager.addPlayer(player);
       draw(0, 0);
     });
-    socket.on('player_ready_state', function (playerInfos) {
+    _socket.on('player_ready_state', function (playerInfos) {
       _playerManager.getPlayerFromId(playerInfos.id).updateFromServer(playerInfos);
     });
-    socket.on('update_game_state', function (gameState) {
+    _socket.on('update_game_state', function (gameState) {
       changeGameState(gameState);
     });
-    socket.on('game_loop_update', function (serverDatasUpdated) {
+    _socket.on('game_loop_update', function (serverDatasUpdated) {
       _playerManager.updatePlayerListFromServer(serverDatasUpdated.players);
       _pipeList = serverDatasUpdated.pipes;
     });
-    socket.on('ranking', function (podium, playerScore) {
+    _socket.on('ranking', function (podium, playerScore) {
       console.log(podium);
       console.log(playerScore);
       displayRanking(podium, playerScore);
@@ -126,7 +131,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     // Send nickname to the server
     console.log('Send nickname ' + nick);
-    socket.emit('say_hi', nick, function (serverState, uuid) {
+    _socket.emit('say_hi', nick, function (serverState, uuid) {
       _userID = uuid;
       changeGameState(serverState);
     });
@@ -203,11 +208,11 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     switch (_gameState) {
       case enumState.WaitingRoom:
         _isCurrentPlayerReady = !_isCurrentPlayerReady;
-        socket.emit('change_ready_state', _isCurrentPlayerReady);
+        _socket.emit('change_ready_state', _isCurrentPlayerReady);
         _playerManager.getCurrentPlayer().updateReadyState(_isCurrentPlayerReady);
         break;
       case enumState.OnGame:
-        socket.emit('player_jump');
+        _socket.emit('player_jump');
         break;
       default:
         break;
@@ -230,7 +235,9 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   }
 
   // Load ressources and Start the client !
+  console.log('Client started, load ressources...');
   canvasPainter.loadRessources(function () {
+    console.log('Ressources loaded, connect to server...');
     startClient();
   });
 

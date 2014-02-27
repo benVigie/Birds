@@ -29,8 +29,9 @@ function playerLog (socket, nick) {
         player.jump();
       });
 
-      // Set player's nickname
+      // Set player's nickname and prepare him for the next game
       player.setNick(nick);
+      _playersManager.addPlayerOnStartGrid(player);
 
       // Notify new client about other players AND notify other about the new one ;)
       socket.emit('player_list', _playersManager.getPlayerList());
@@ -72,9 +73,9 @@ function createNewGame () {
 
   // Reset players state and send it
   players = _playersManager.resetPlayersForNewGame();
-  /*for (i = 0; i < players.length; i++) {
+  for (i = 0; i < players.length; i++) {
     io.sockets.emit('player_ready_state', players[i]);
-  };*/
+  };
 
   // Notify players of the new game state
   updateGameState(enums.ServerState.WaitingForPlayers, true);
@@ -136,21 +137,15 @@ function startGameLoop () {
     // Notify players
     io.sockets.emit('game_loop_update', { players: _playersManager.getPlayerList(), pipes: _pipeManager.getPipeList()});
 
-    /* DEBUG, TO REMOVE */
-    if ((now - _timeStartGame) > 10000) {
-      clearInterval(_timer);
-      updateGameState(enums.ServerState.Ranking, true);
-      _lastTime = null;
-    }
-    /* END DEBUG */
-
-
   }, 1000 / 60);
 }
 
 
 exports.startServer = function () {
   io = require('socket.io').listen(Const.SOCKET_PORT);
+  io.configure(function(){
+    io.set('log level', 2);
+  });
 
   _gameState = enums.ServerState.WaitingForPlayers;
   
