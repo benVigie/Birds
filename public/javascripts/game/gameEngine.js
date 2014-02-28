@@ -84,6 +84,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       // Draw bg and bind button click
       draw(0, 0);
       showHideMenu(enumPanels.Login, true);
+      // showHideMenu(enumPanels.Ranking, true);
       document.getElementById('player-connection').onclick = loadGameRoom;
   
     });
@@ -134,10 +135,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _playerManager.updatePlayerListFromServer(serverDatasUpdated.players);
       _pipeList = serverDatasUpdated.pipes;
     });
-    _socket.on('ranking', function (podium, playerScore) {
-      console.log(podium);
-      console.log(playerScore);
-      displayRanking(podium, playerScore);
+    _socket.on('ranking', function (score) {
+      displayRanking(score);
     });
 
     // Send nickname to the server
@@ -159,7 +158,27 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     return (false);
   }
 
-  function displayRanking () {
+  function displayRanking (score) {
+    var nodeMedal = document.querySelector('.gs-ranking-medal');
+
+    // Remove previous medals just in case
+    nodeMedal.classList.remove('third');
+    nodeMedal.classList.remove('second');
+    nodeMedal.classList.remove('winner');
+
+    // Display scores
+    document.getElementById('gs-ranking-score').innerHTML = score.score;
+    document.getElementById('gs-ranking-best').innerHTML = score.bestScore;
+    document.getElementById('gs-ranking-pos').innerHTML = score.rank + ' / ' + score.nbPlayers;
+
+    // Set medal !
+    if (score.rank == 1)
+      nodeMedal.classList.add('winner');
+    else if (score.rank == 2)
+      nodeMedal.classList.add('second');
+    else if (score.rank == 3)
+      nodeMedal.classList.add('third');
+
     // Show menu
     showHideMenu(enumPanels.Ranking, true);
   }
@@ -239,6 +258,19 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       if (currentOverlayPanel)
         currentOverlayPanel.classList.remove('overlay');
       panel.classList.add('overlay');
+    }
+    else {
+      if (currentOverlayPanel)
+        currentOverlayPanel.classList.remove('overlay');
+    }
+  }
+  
+  function infoPanel (isShow, htmlText, timeout) {
+    var panel = document.getElementById('gs-info-panel'),
+        currentOverlayPanel = document.querySelector('.showPanel');
+
+    if (isShow == false) {
+      panel.classList.remove('overlay');
     }
     else {
       if (currentOverlayPanel)

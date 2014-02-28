@@ -7,7 +7,10 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
   var NB_RESSOURCES_TO_LOAD   = 2;
   var BACKGROUNDS = bgRessources;
   var BIRDS_SPRITES = [
-    'images/clumsy.png'
+    'images/clumsy.png',
+    'images/clumsy2.png',
+    'images/clumsy3.png',
+    'images/clumsy4.png'
   ];
 
   var that = {},

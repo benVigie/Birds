@@ -1,12 +1,14 @@
 var util          = require('util'),
     EventEmitter  = require('events').EventEmitter,
+    Scores        = require('./scoreSystem'),
     Player        = require('./player'),
     enums         = require('./enums');
 
-var NB_AVAILABLE_BIRDS_COLOR = 1;
+var NB_AVAILABLE_BIRDS_COLOR = 4;
 
 var _playersList  = new Array(),
-    _posOnGrid    = 0;
+    _posOnGrid    = 0,
+    _scores       = new Scores();
 
 function PlayersManager () {
   EventEmitter.call(this);
@@ -23,6 +25,7 @@ PlayersManager.prototype.addNewPlayer = function (playerSocket, id) {
 
   // Create new player and add it in the list
   newPlayer = new Player(playerSocket, id, birdColor);
+  newPlayer.setBestScore(_scores.retreiveHighScore(newPlayer));
   _playersList.push(newPlayer);
 
   console.info('New player connected. There is currently ' + _playersList.length + ' player(s)');
@@ -130,7 +133,7 @@ PlayersManager.prototype.sendPlayerScore = function () {
 
   // Send score
   for (i = 0; i < nbPlayers; i++) {
-    _playersList[i].sendScore();
+    _playersList[i].sendScore(nbPlayers);
   };
 };
 

@@ -30,11 +30,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-
-// Routes to serve the static HTML game page
-app.get('/birds', function(req, res) {
-    res.sendfile('./public/birds.html');
-});
+app.get('/birds', routes.birds);
 
 // Route to get shared const file
 app.get('/sharedConstants.js', function(req, res) {

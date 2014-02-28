@@ -26,16 +26,22 @@ define(['playerEntity'], function (Player) {
   }; 
 
   PlayerManager.prototype.removePlayer = function (player) {
-    var pos = _keyMatching[player.id];
+    var pos = _keyMatching[player.id],
+        i;
   
     if (typeof pos == 'undefined') {
       console.log("Can't find the disconected player in list");
     }
     else {
-      console.log('Removing ' + _playerList[pos].getNick());
       // Remove player from lists
+      console.log('Removing ' + _playerList[pos].getNick());
       _playerList.splice(pos, 1);
-      // delete _keyMatching[player.id];
+
+      // Reset keys
+      _keyMatching = new Array();
+      for (i = 0; i < _playerList.length; i++) {
+        _keyMatching[_playerList[i].getId()] = i;
+      };
     }
   
   };

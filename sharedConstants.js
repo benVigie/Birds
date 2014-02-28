@@ -3,20 +3,20 @@ var constant = {
 
   SERVER_PORT:              4242,
   SOCKET_PORT:              80,
-  SOCKET_ADDR:              '127.0.0.1',
+  SOCKET_ADDR:              'http://172.21.204.213',
 
   SCREEN_WIDTH:             900,
   SCREEN_HEIGHT:            768,
   FLOOR_POS_Y:              672,
-  LEVEL_SPEED:              0.3,
+  LEVEL_SPEED:              0.2,
   TIME_BETWEEN_GAMES:       5000,
 
-  BIRD_WIDTH:               85,
-  BIRD_HEIGHT:              60,
+  BIRD_WIDTH:               42,
+  BIRD_HEIGHT:              30,
 
   // Pipe constants
   PIPE_WIDTH:               148,
-  DISTANCE_BETWEEN_PIPES:   250 + this.PIPE_WIDTH,
+  DISTANCE_BETWEEN_PIPES:   300 + this.PIPE_WIDTH,
   MIN_PIPE_HEIGHT:          20,
   MAX_PIPE_HEIGHT:          680,
   HEIGHT_BETWEEN_PIPE:      150

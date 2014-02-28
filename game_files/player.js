@@ -7,20 +7,23 @@ var START_BIRD_POS_X        = 100;
 var SPACE_BETWEEN_BIRDS_X   = 120;
 var START_BIRD_POS_Y        = 100;
 var SPACE_BETWEEN_BIRDS_Y   = 100;
+var GRAVITY_SPEED           = 0.05;
+var JUMP_SPEED              = -0.6;
 
 function Player (socket, uid, color) {
-  this._socket  = socket;
-  this._gravity = 0.1;
-  this._speedJump = -1;
-  this._speedY  = 0;
+  this._socket    = socket;
+  this._speedY    = 0;
+  this._isInAPipe = false;
+  this._rank      = 1;
   this._playerTinyObject = {
-      id:     uid,
-      nick:   '',
-      color:  color,
-      score:  0,
-      state:  enums.PlayerState.OnLoginScreen,
-      posX:   0,
-      posY:   0
+      id:         uid,
+      nick:       '',
+      color:      color,
+      score:      0,
+      best_score: 0,
+      state:      enums.PlayerState.OnLoginScreen,
+      posX:       0,
+      posY:       0
     };
   };
 
@@ -29,7 +32,7 @@ function Player (socket, uid, color) {
     
     // If player is still alive, update its Y position
     if (this._playerTinyObject.state == enums.PlayerState.Playing) {
-      this._speedY += this._gravity;
+      this._speedY += GRAVITY_SPEED;
       this._playerTinyObject.posY += Math.round(timeLapse * this._speedY);
     }
     // If he's died, update it's X position
@@ -42,7 +45,7 @@ function Player (socket, uid, color) {
   };
   
   Player.prototype.jump = function () {
-    this._speedY = this._speedJump;
+    this._speedY = JUMP_SPEED;
   };
 
   Player.prototype.getNick = function () { return (this._playerTinyObject.nick); };
@@ -55,13 +58,18 @@ function Player (socket, uid, color) {
   
   Player.prototype.getState = function () { return (this._playerTinyObject.state); };
   
-  Player.prototype.sorryYouAreDie = function () {
+  Player.prototype.sorryYouAreDie = function (nbPlayersLeft) {
+    this._rank = nbPlayersLeft;
     this._playerTinyObject.state = enums.PlayerState.Died;
   };
 
   Player.prototype.setReadyState = function (readyState) {
     this._playerTinyObject.state = (readyState == true) ? enums.PlayerState.Playing : enums.PlayerState.WaitingInLobby;
     console.info(this._playerTinyObject.nick + ' is ' + ((this._playerTinyObject.state == enums.PlayerState.Playing) ? 'ready !' : 'not yet ready'));
+  };
+
+  Player.prototype.setBestScore = function (score) {
+    this._playerTinyObject.best_score = score;
   };
 
   Player.prototype.isReadyToPlay = function () {
@@ -86,15 +94,33 @@ function Player (socket, uid, color) {
 
     // Reset usefull values
     this._speedY  = 0;
+    this._rank    = 0;
     this._playerTinyObject.score =  0;
     // Update all register players
     if (this._playerTinyObject.nick != '')
       this._playerTinyObject.state = enums.PlayerState.WaitingInLobby;
+  };  
+
+  Player.prototype.updateScore = function (isEnterAPipe) {
+    // PLayer enters a pipe
+    if (isEnterAPipe == true && this._isInAPipe == false)
+    {
+      this._playerTinyObject.score++;
+      this._isInAPipe = true;
+    }
+    else if (isEnterAPipe == false && this._isInAPipe == true)
+      this._isInAPipe = false;
   };
 
-  Player.prototype.sendScore = function () {
-    
-    this._socket.emit('ranking',  { score: this._playerTinyObject.score, rank: 2, nbPlayers: 4, newBestScore: true });
+  Player.prototype.sendScore = function (NBPlayers) {
+    var isNewBestScore = false;
+
+    if (this._playerTinyObject.score > this._playerTinyObject.best_score) {
+      this._playerTinyObject.best_score = this._playerTinyObject.score;
+      isNewBestScore = true;
+    }
+
+    this._socket.emit('ranking',  { score: this._playerTinyObject.score, bestScore: this._playerTinyObject.best_score, rank: this._rank, nbPlayers: NBPlayers, newBestScore: isNewBestScore });
   };
   
 

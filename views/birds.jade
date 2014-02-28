@@ -1,6 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <head>
+doctype html
+html
+  head
+    script(rel='stylesheet', src=wsAddress + '/socket.io/socket.io.js').
     
     <link href="/images/favicon.ico" rel="icon" type="image/ico" />
     <meta charset='utf-8'>
@@ -8,15 +9,13 @@
 
     <link href="stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
 
-    <script src="http://192.168.1.76:80/socket.io/socket.io.js"></script>
-    <!-- <script src="http://172.21.204.213:80/socket.io/socket.io.js"></script> -->
     <script data-main="javascripts/game/gameEngine" src="javascripts/lib/require.min.js"></script>
 
-  </head>
-
-  <body>
+  body.
 
     <div id="gameScreen">
+
+      <div id="gs-info-panel">To fly, press your <strong>space bar</strong> !</div>
       
       <canvas id="gs-canvas" width="900" height="768"></canvas>
       
@@ -39,7 +38,21 @@
 
       <div id="gs-ranking" class="inGamePanel">
         <h1 id="gs-ranking-title">Game Over</h1>
-        <div>
+        <div id="gs-ranking-box">
+          <div class="gs-ranking-panel">
+            <h3>Medal</h3>
+            <div class="gs-ranking-medal"></div>
+            <strong id="gs-ranking-pos" class="gs-ranking-text gs-ranking-text-mini">- / -</strong>
+          </div>
+          <div class="gs-ranking-panel">
+            <h3>Score</h3>
+            <strong id="gs-ranking-score" class="gs-ranking-text">-</strong>
+            
+            <h3>Best</h3>
+            <strong id="gs-ranking-best" class="gs-ranking-text">-</strong>
+            
+          </div>
+
         </div>
         <h2>Next game in <span id="gs-ranking-timer">42</span>s...</h2>
       </div>
@@ -50,7 +63,3 @@
       </div>
 
     </div>
-
-  </body>
-
-</html>
