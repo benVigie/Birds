@@ -1,11 +1,11 @@
 var util          = require('util'),
     EventEmitter  = require('events').EventEmitter,
-    Pipe          = require('./pipe').createNewPipe,
+    Pipe          = require('./pipe'),
     enums         = require('./enums'),
     Const         = require('../sharedConstants').constant;
 
 var FIRST_PIPE_POSX   = Const.SCREEN_WIDTH + 100;
-var SPAWN_PIPE_ALERT  = 900;
+var SPAWN_PIPE_ALERT  = Const.SCREEN_WIDTH;
 
 var _pipeList = new Array(),
     _socket = null;

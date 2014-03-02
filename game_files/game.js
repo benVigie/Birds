@@ -30,8 +30,7 @@ function playerLog (socket, nick) {
       });
 
       // Set player's nickname and prepare him for the next game
-      player.setNick(nick);
-      _playersManager.addPlayerOnStartGrid(player);
+      _playersManager.prepareNewPlayer(player, nick);
 
       // Notify new client about other players AND notify other about the new one ;)
       socket.emit('player_list', _playersManager.getPlayerList());
@@ -109,7 +108,8 @@ function startGameLoop () {
   // Start timer
   _timer = setInterval(function() {
     var now = new Date().getTime(),
-        ellapsedTime = 0;
+        ellapsedTime = 0,
+        plList;
 
     // get time difference between the last call and now
     if (_lastTime) {
@@ -135,7 +135,7 @@ function startGameLoop () {
     }
 
     // Notify players
-    io.sockets.emit('game_loop_update', { players: _playersManager.getPlayerList(), pipes: _pipeManager.getPipeList()});
+    io.sockets.emit('game_loop_update', { players: _playersManager.getOnGamePlayerList(), pipes: _pipeManager.getPipeList()});
 
   }, 1000 / 60);
 }

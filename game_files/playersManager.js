@@ -25,7 +25,6 @@ PlayersManager.prototype.addNewPlayer = function (playerSocket, id) {
 
   // Create new player and add it in the list
   newPlayer = new Player(playerSocket, id, birdColor);
-  newPlayer.setBestScore(_scores.retreiveHighScore(newPlayer));
   _playersList.push(newPlayer);
 
   console.info('New player connected. There is currently ' + _playersList.length + ' player(s)');
@@ -59,7 +58,6 @@ PlayersManager.prototype.changeLobbyState = function (player, isReady) {
     _playersList[pos].setReadyState(isReady);
   }
 
-  debugger
   // PlayersManager check if players are ready
   for (i = 0; i < nbPlayers; i++) {
     // if at least one player doesn't ready, return
@@ -84,6 +82,19 @@ PlayersManager.prototype.getPlayerList = function (specificState) {
         players.push(_playersList[i]);
     }
     else
+      players.push(_playersList[i].getPlayerObject());
+  };
+
+  return (players);
+}
+
+PlayersManager.prototype.getOnGamePlayerList = function () {
+  var players = new Array(),
+      nbPlayers = _playersList.length,
+      i;
+
+  for (i = 0; i < nbPlayers; i++) {
+    if ((_playersList[i].getState() == enums.PlayerState.Playing) || (_playersList[i].getState() == enums.PlayerState.Died))
       players.push(_playersList[i].getPlayerObject());
   };
 
@@ -131,13 +142,24 @@ PlayersManager.prototype.sendPlayerScore = function () {
   var nbPlayers = _playersList.length,
       i;
 
-  // Send score
+  // Store the score of the player and send it to him
   for (i = 0; i < nbPlayers; i++) {
+    // Store score
+    _scores.savePlayerScore(_playersList[i], _playersList[i].getScore());
+
+    // Send score
     _playersList[i].sendScore(nbPlayers);
   };
 };
 
-PlayersManager.prototype.addPlayerOnStartGrid = function (player) {
+PlayersManager.prototype.prepareNewPlayer = function (player, nickname) {
+  // Set his nickname
+  player.setNick(nickname);
+
+  // retreive his highscore
+  _scores.setPlayerHighScore(player);
+
+  // Put him on the game grid 
   player.preparePlayer(_posOnGrid++);
 };
 

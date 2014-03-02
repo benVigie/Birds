@@ -59,8 +59,7 @@ h1, h2 {
 #gs-info-panel strong {
 	color: #FD9F4C;
 }
-
-#gs-info-panel.showPanel { top: 0; }
+#gs-info-panel.showTopBar { top: 0; }
 
 canvas {
 	background: #0099CC;

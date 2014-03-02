@@ -21,8 +21,13 @@ define(['playerEntity'], function (Player) {
     // because we will don't need to iterate the player list to update it
     _keyMatching[infos.id] = _playerList.length - 1;
 
-    if (player.isCurrentPlayer() == true)
+    console.log('[' + player.getNick() + '] just join the game !');
+    console.log(player);
+
+    if (player.isCurrentPlayer() == true) {
       _currentPlayer = _playerList.length - 1;
+      console.log("Hey, it's me !");
+    }
   }; 
 
   PlayerManager.prototype.removePlayer = function (player) {
@@ -41,7 +46,11 @@ define(['playerEntity'], function (Player) {
       _keyMatching = new Array();
       for (i = 0; i < _playerList.length; i++) {
         _keyMatching[_playerList[i].getId()] = i;
+  
+        if (_playerList[i].isCurrentPlayer() == true)
+          _currentPlayer = i;
       };
+
     }
   
   };

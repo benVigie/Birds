@@ -1,16 +1,25 @@
 /*
 *   Class to manage the canvas. Draw players, backgrounds, etc...  
 */
-define(['parallax', 'backgroundressources', '../../sharedConstants'], function (Parallax, bgRessources, Const) {
+define(['parallax', 'backgroundressources', '../../sharedConstants'], function (Parallax, BgRessources, Const) {
 
-  var HEIGHT_BETWEEN_PIPES    = 150;
+  // Sprite ressource dimensions
+  var SPRITE_PIPE_HEIGHT  = 768;
+  var SPRITE_PIPE_WIDTH   = 148;
+
+  // Const to display score in game
+  var SCORE_POS_Y         = 200;
+  var SCORE_SHADOW_OFFSET = 5;
+
+  // Ressources
   var NB_RESSOURCES_TO_LOAD   = 2;
-  var BACKGROUNDS = bgRessources;
+
+  // Birds sprites
   var BIRDS_SPRITES = [
     'images/clumsy.png',
-    'images/clumsy2.png',
-    'images/clumsy3.png',
-    'images/clumsy4.png'
+    'images/clumsy-blue.png',
+    'images/clumsy-red.png',
+    'images/clumsy-multi.png'
   ];
 
   var that = {},
@@ -18,24 +27,53 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
       _isReadyToDraw = false,
 
       // Ressources
-      _nbRessourcesToLoad = NB_RESSOURCES_TO_LOAD + BACKGROUNDS.length + BIRDS_SPRITES.length,
+      _nbRessourcesToLoad = getNbRessourcesToLoad(),
       _picGround,
       _parallaxGround,
       _picPipe,
       _picBG = new Array();
       _picBirds = new Array();
 
+
+  function getNbRessourcesToLoad () {
+    var nbRessources = NB_RESSOURCES_TO_LOAD + BIRDS_SPRITES.length,
+        nbBg = BgRessources.length,
+        i;
+
+    // Search number of BG ressources
+    for (i = 0; i < nbBg; i++) {
+      if (typeof BgRessources[i].daySrc !== 'undefined')
+        nbRessources++;
+      if (typeof BgRessources[i].nightSrc !== 'undefined')
+        nbRessources++;
+    };
+
+    return (nbRessources);
+  }
+
   function drawPipe (pipe) {
     // Draw the first pipe
-    ctx.drawImage(_picPipe, pipe.posX, pipe.posY - 768, 148, 768);
+    ctx.drawImage(_picPipe, 0, 0, SPRITE_PIPE_WIDTH, SPRITE_PIPE_HEIGHT, pipe.posX, pipe.posY - SPRITE_PIPE_HEIGHT, Const.PIPE_WIDTH, SPRITE_PIPE_HEIGHT);
 
     // And the other one
-    ctx.drawImage(_picPipe, pipe.posX, pipe.posY + HEIGHT_BETWEEN_PIPES, 148, 768);
+    ctx.drawImage(_picPipe, 0, 0, SPRITE_PIPE_WIDTH, SPRITE_PIPE_HEIGHT, pipe.posX, pipe.posY + Const.HEIGHT_BETWEEN_PIPES, Const.PIPE_WIDTH, SPRITE_PIPE_HEIGHT);
   };
 
-  that.draw = function (currentTime, ellapsedTime, players, pipes) {
+  function drawScore (score) {
+    var posX;
+
+    posX = (Const.SCREEN_WIDTH / 2) - (ctx.measureText(score).width / 2);
+    ctx.font = '120px mini_pixel';
+    ctx.fillStyle = 'black';
+    ctx.fillText(score, posX + SCORE_SHADOW_OFFSET, SCORE_POS_Y + SCORE_SHADOW_OFFSET);
+    ctx.fillStyle = 'white';
+    ctx.fillText(score, posX, SCORE_POS_Y);
+  };
+
+  that.draw = function (currentTime, ellapsedTime, playerManager, pipes, gameState, isNight) {
     var nb,
-        i;
+        i,
+        players = playerManager.getPlayers();
 
     if (!_isReadyToDraw) {
       console.log('[ERROR] : Ressources not yet loaded !');
@@ -44,12 +82,12 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
 
     // First, draw the background
     ctx.fillStyle = '#0099CC';
-    ctx.fillRect(0, 0, 900, 768);
+    ctx.fillRect(0, 0, Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
     
     // Then backgrounds pictures
     nb = _picBG.length;
     for (i = 0; i < nb; i++) {
-      _picBG[i].draw(ctx, ellapsedTime);
+      _picBG[i].draw(ctx, ellapsedTime, isNight);
     };
 
     // Draw pipes
@@ -68,6 +106,10 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
       };
     }
 
+    // Draw score
+    if (gameState == 2)
+      drawScore(playerManager.getCurrentPlayer().getScore());
+
     // Last but not least, draw ground
     if (pipes)
       _parallaxGround.draw(ctx, currentTime);
@@ -75,16 +117,26 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
       _parallaxGround.draw(ctx, 0);
   };
 
+    that.resetForNewGame = function () {
+    var nb = _picBG.length,
+        i;
+    // Reset state of backgrounds pictures
+    for (i = 0; i < nb; i++) {
+      _picBG[i].resetToDayCycle();
+    };
+  };
+
   that.loadRessources = function (onReadyCallback) {
     var bird,
-        bg,
+        dBg,
+        nBg,
         i;
 
     // Load ground
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
     _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
-    _parallaxGround = new Parallax(_picGround, 900, 96, Const.LEVEL_SPEED / 1000, 672, Const.SCREEN_WIDTH);
+    _parallaxGround = new Parallax(_picGround, null, 900, 96, Const.LEVEL_SPEED, 672, Const.SCREEN_WIDTH);
 
     // Load pipe
     _picPipe = new Image();
@@ -102,18 +154,33 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
 
     // Load Backgrounds
     // Be carefull, the position in the array matters. First add, first draw !
-    for (i = 0; i < BACKGROUNDS.length; i++) {
-      bg = new Image();
-      bg.src = BACKGROUNDS[i].src;
-      bg.onload = function() { onRessourceLoaded(onReadyCallback); };
-      
+    for (i = 0; i < BgRessources.length; i++) {
+
+      // If a day ressource exists for thi BG, load it
+      if (typeof BgRessources[i].daySrc !== 'undefined') {
+        dBg = new Image();
+        dBg.src = BgRessources[i].daySrc;
+        dBg.onload = function() { onRessourceLoaded(onReadyCallback); };
+      }
+      else
+        dBg = null;
+
+      // The same for night version of this bg...
+      if (typeof BgRessources[i].nightSrc !== 'undefined') {
+        nBg = new Image();
+        nBg.src = BgRessources[i].nightSrc;
+        nBg.onload = function() { onRessourceLoaded(onReadyCallback); };
+      }
+      else
+        nBg = null;
+
       // Create a parallax obj with this ressource and add it in the bg array
-      _picBG.push(new Parallax(bg, BACKGROUNDS[i].width, BACKGROUNDS[i].height, BACKGROUNDS[i].speed, BACKGROUNDS[i].posY, Const.SCREEN_WIDTH));
+      _picBG.push(new Parallax(dBg, nBg, BgRessources[i].width, BgRessources[i].height, BgRessources[i].speed, BgRessources[i].posY, Const.SCREEN_WIDTH));
     };
 
 
     function onRessourceLoaded (onReadyCallback) {
-      var totalRessources = NB_RESSOURCES_TO_LOAD + BACKGROUNDS.length + BIRDS_SPRITES.length;
+      var totalRessources = getNbRessourcesToLoad();
       
       if (--_nbRessourcesToLoad <= 0) {
         _isReadyToDraw = true;

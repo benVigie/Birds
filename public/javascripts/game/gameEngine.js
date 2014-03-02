@@ -24,10 +24,17 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _lastTime = null,
       _rankingTimer,
       _ranking_time,
-      _socket;
+      _isTouchDevice = false,
+      _socket
+      _isNight = false;
 
   function draw (currentTime, ellapsedTime) {
-    canvasPainter.draw(currentTime, ellapsedTime, _playerManager.getPlayers(), _pipeList);
+
+    // If player score is > 20, night !!
+    if ((_gameState == enumState.OnGame) && (_playerManager.getCurrentPlayer().getScore() == 20))
+      _isNight = !_isNight;
+
+    canvasPainter.draw(currentTime, ellapsedTime, _playerManager, _pipeList, _gameState, _isNight);
   }
 
   requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -64,12 +71,17 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
 
   function startClient () {
+    if (typeof io == 'undefined') {
+      document.getElementById('gs-error-message').innerHTML = 'Cannot retreive socket.io file at the address ' + Const.SOCKET_ADDR + '<br/><br/>Please provide a valid address.';
+      showHideMenu(enumPanels.Error, true);
+      console.log('Cannot reach socket.io file !');
+      return;
+    }
 
     _playerManager = new PlayersManager();
 
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
     _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
-    // _socket = io.connect('http://172.21.204.213:80', { reconnect: false });
     _socket.on('connect', function() {
       
       console.log('Connection established :)');
@@ -102,6 +114,11 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     if (nick == '')
       return (false);
+    else if (nick == 'Player_1') {
+      infoPanel(true, 'Please choose your <strong>name</strong> !', 2000);
+      document.getElementById('player-name').focus();
+      return (false);
+    }
 
     // Unbind button event to prevent "space click"
     document.getElementById('player-connection').onclick = function() { return false; };
@@ -144,14 +161,26 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     _socket.emit('say_hi', nick, function (serverState, uuid) {
       _userID = uuid;
       changeGameState(serverState);
-    });
 
-    // Get keyboard input
-    document.addEventListener('keydown', function (event) {
-        if (event.keyCode == 32) {
-            inputsManager();
-        }
+      // Display a little help text
+      if (_isTouchDevice == false)
+        infoPanel(true, 'Press <strong>space</strong> to fly !', 3000);
+      else
+        infoPanel(true, '<strong>Tap</strong> to fly !', 3000);
     });
+  
+    // Get input
+    if (_isTouchDevice == false) {
+      document.addEventListener('keydown', function (event) {
+          if (event.keyCode == 32) {
+              inputsManager();
+          }
+      });
+    }
+    else {
+      var evt = window.navigator.msPointerEnabled ? 'MSPointerDown' : 'touchstart';
+      document.addEventListener(evt, inputsManager);
+    }
 
     // Hide login screen
     showHideMenu(enumPanels.Login, false);
@@ -181,6 +210,10 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     // Show menu
     showHideMenu(enumPanels.Ranking, true);
+
+    // reset graphics in case to prepare the next game
+    canvasPainter.resetForNewGame();
+    _isNight = false;
   }
 
   function changeGameState (gameState) {
@@ -189,12 +222,10 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     _gameState = gameState;
 
     switch (_gameState) {
-      // If we 
       case enumState.WaitingRoom:
         strLog += 'waiting in lobby';
         _isCurrentPlayerReady = false;
         lobbyLoop();
-        // draw(0, 0);
         break;
 
       case enumState.OnGame:
@@ -206,16 +237,18 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
         strLog += 'display ranking';
         // Start timer for next game
         _ranking_time = Const.TIME_BETWEEN_GAMES / 1000;
-        timerNode = document.getElementById('gs-ranking-timer');
-        timerNode.innerHTML = (_ranking_time).toString();
+        
+        // Display the remaining time on the top bar
+        infoPanel(true, 'Next game in <strong>' + _ranking_time + 's</strong>...');
         _rankingTimer = window.setInterval(function() {
             // Set seconds left
-            timerNode.innerHTML = (--_ranking_time).toString();
-
+            infoPanel(true, 'Next game in <strong>' + (--_ranking_time) + 's</strong>...');
+            
             // Stop timer if time is running up
             if (_ranking_time <= 0) {
-              // Reset timer
+              // Reset timer and remove top bar
               window.clearInterval(_rankingTimer);
+              infoPanel(false);
               
               // Reset pipe list and hide ranking panel
               _pipeList = null;
@@ -266,18 +299,35 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   }
   
   function infoPanel (isShow, htmlText, timeout) {
-    var panel = document.getElementById('gs-info-panel'),
-        currentOverlayPanel = document.querySelector('.showPanel');
+    var topBar   = document.getElementById('gs-info-panel');
 
+    // Hide the bar
     if (isShow == false) {
-      panel.classList.remove('overlay');
+      topBar.classList.remove('showTopBar');
     }
     else {
-      if (currentOverlayPanel)
-        currentOverlayPanel.classList.remove('overlay');
+      // If a set is setted, print it
+      if (htmlText)
+        topBar.innerHTML = htmlText;
+      // If a timeout is specified, close the bar after this time !
+      if (timeout)
+        setTimeout(function() {
+          infoPanel(false);
+        }, timeout);
+
+      // Don't forget to display the bar :)
+      topBar.classList.add('showTopBar');
     }
   }
 
+  // Detect touch event. If available, we will use touch events instead of space key
+  if (window.navigator.msPointerEnabled)
+    _isTouchDevice = true;
+  else if ('ontouchstart' in window)
+    _isTouchDevice = true;
+  else
+    _isTouchDevice = false;
+  
   // Load ressources and Start the client !
   console.log('Client started, load ressources...');
   canvasPainter.loadRessources(function () {
