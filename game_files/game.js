@@ -111,6 +111,7 @@ function startGameLoop () {
         ellapsedTime = 0,
         plList;
 
+
     // get time difference between the last call and now
     if (_lastTime) {
       ellapsedTime = now - _lastTime;
@@ -120,6 +121,11 @@ function startGameLoop () {
     }
 
     _lastTime = now;
+    
+    // If everyone has quit the game, exit it
+    if (_playersManager.getNumberOfPlayers() == 0) {
+      gameOver();
+    }
 
     // Update players position
     _playersManager.updatePlayers(ellapsedTime);

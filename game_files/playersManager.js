@@ -101,6 +101,10 @@ PlayersManager.prototype.getOnGamePlayerList = function () {
   return (players);
 }
 
+PlayersManager.prototype.getNumberOfPlayers = function () {
+  return (_playersList.length);
+}
+
 PlayersManager.prototype.updatePlayers = function (time) {
   var nbPlayers = _playersList.length,
       i;

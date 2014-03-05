@@ -92,6 +92,13 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
         showHideMenu(enumPanels.Error, true);
         console.log('Connection with the server lost :( ');
       });
+
+      // Try to retreive previous player name if exists
+      if (typeof sessionStorage != 'undefined') {
+        if ('playerName' in sessionStorage) {
+          document.getElementById('player-name').value = sessionStorage.getItem('playerName');
+        }
+      }
       
       // Draw bg and bind button click
       draw(0, 0);
@@ -112,12 +119,17 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   function loadGameRoom () {
     var nick = document.getElementById('player-name').value;
 
-    if (nick == '')
-      return (false);
-    else if (nick == 'Player_1') {
+    // If nick is empty or if it has the default value, 
+    if ((nick == '') || (nick == 'Player_1')) {
       infoPanel(true, 'Please choose your <strong>name</strong> !', 2000);
       document.getElementById('player-name').focus();
       return (false);
+    }
+    // Else store it in sessionstorage if available
+    else {
+      if (typeof sessionStorage != 'undefined') {
+        sessionStorage.setItem('playerName', nick);
+      }
     }
 
     // Unbind button event to prevent "space click"

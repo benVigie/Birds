@@ -13,8 +13,15 @@ define(['playerEntity'], function (Player) {
   };
 
   PlayerManager.prototype.addPlayer = function (infos, playerID) {
+    var player;
+
+    if (this.getPlayerFromId(infos.id) !== null) {
+      console.log(infos.nick + ' is already in the list ! Adding aborted');
+      return;
+    }
+
     // Create a player and push it into the player list
-    var player = new Player(infos, playerID);
+    player = new Player(infos, playerID);
 
     _playerList.push(player);
     // Add his ID in _keyMatching. WIth that, synchro with the server will be quick
@@ -84,7 +91,6 @@ define(['playerEntity'], function (Player) {
     console.log("Can't find player in list");
     return (null);
   };
-
 
   return (PlayerManager);
 });
