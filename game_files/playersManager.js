@@ -146,14 +146,22 @@ PlayersManager.prototype.sendPlayerScore = function () {
   var nbPlayers = _playersList.length,
       i;
 
-  // Store the score of the player and send it to him
+  // Save player score
   for (i = 0; i < nbPlayers; i++) {
-    // Store score
     _scores.savePlayerScore(_playersList[i], _playersList[i].getScore());
-
-    // Send score
-    _playersList[i].sendScore(nbPlayers);
   };
+
+  // Retreive highscores and then send scores to players
+  _scores.getHighScores(function (highScores) {
+    var nbPlayers = _playersList.length,
+        i;
+
+    // Send score to the players
+    for (i = 0; i < nbPlayers; i++) {
+      _playersList[i].sendScore(nbPlayers, highScores);
+    };
+  });
+
 };
 
 PlayersManager.prototype.prepareNewPlayer = function (player, nickname) {

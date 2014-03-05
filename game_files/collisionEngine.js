@@ -7,8 +7,8 @@ function checkBirdCollision (pipe, birdInstance) {
   if (((bird.posX + Const.BIRD_WIDTH) > pipe.posX) && 
     (bird.posX  < (pipe.posX + Const.PIPE_WIDTH))) {
 
-    // Notify the bird he is inside a pipe
-    birdInstance.updateScore(true);
+    // Notify the bird he is inside the pipe
+    birdInstance.updateScore(pipe.id);
 
     // Check if the bird touch the upper pipe
     if (bird.posY < pipe.posY)
@@ -19,8 +19,6 @@ function checkBirdCollision (pipe, birdInstance) {
       return (true);
     }
   }
-  else
-    birdInstance.updateScore(false);
   
   // If the bird hit the ground
   if (bird.posY + Const.BIRD_HEIGHT > Const.FLOOR_POS_Y) {

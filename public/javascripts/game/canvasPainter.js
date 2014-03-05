@@ -1,7 +1,7 @@
 /*
 *   Class to manage the canvas. Draw players, backgrounds, etc...  
 */
-define(['parallax', 'backgroundressources', '../../sharedConstants'], function (Parallax, BgRessources, Const) {
+define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (Parallax, BgRessources, Const) {
 
   // Sprite ressource dimensions
   var SPRITE_PIPE_HEIGHT  = 768;
@@ -19,9 +19,7 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     'images/clumsy.png',
     'images/clumsy-blue.png',
     'images/clumsy-red.png',
-    'images/clumsy-multi.png',
-    'images/clumsy_flashy.png',
-    'images/flappy_flippant.png'
+    'images/clumsy-multi.png'
   ];
 
   var that = {},
@@ -104,7 +102,7 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     if (players) {
       nb = players.length;
       for (i = 0; i < nb; i++) {
-        players[i].draw(ctx, currentTime, _picBirds);
+        players[i].draw(ctx, currentTime, _picBirds, gameState);
       };
     }
 

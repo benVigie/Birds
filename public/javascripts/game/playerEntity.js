@@ -5,7 +5,7 @@ define(['../../sharedConstants'], function (Const) {
 
   var enumPlayerState = {
     Unset: 1,
-    WaintingInLobby: 2,
+    WaitingInLobby: 2,
     Playing: 3,
     Died: 4
   };
@@ -25,11 +25,16 @@ define(['../../sharedConstants'], function (Const) {
       console.log('Adding player ' + infos.nick);
     };
 
-    Player.prototype.draw = function (ctx, time, spriteList) {
+    Player.prototype.draw = function (ctx, time, spriteList, gameState) {
       var frameNumber,
           nickPos;
 
+      // Do not draw bird if its state is unclear
       if (this._serverInfos.state == enumPlayerState.Unset) {
+        return;
+      }
+      // And do not draw bird if he's waiting in the lobby for the current game finish
+      else if ((this._serverInfos.state == enumPlayerState.WaitingInLobby) && (gameState == 2)) {
         return;
       }
       else {
@@ -54,7 +59,7 @@ define(['../../sharedConstants'], function (Const) {
         ctx.rotate(this._serverInfos.rotation * Math.PI / 180);
 
         // Then draw bird
-        if (this._serverInfos.state == enumPlayerState.WaintingInLobby) {
+        if (this._serverInfos.state == enumPlayerState.WaitingInLobby) {
           ctx.drawImage(spriteList[this._serverInfos.color], 0, 0, SPRITE_BIRD_WIDTH, SPRITE_BIRD_HEIGHT, -(Const.BIRD_WIDTH / 2), -(Const.BIRD_HEIGHT / 2), Const.BIRD_WIDTH, Const.BIRD_HEIGHT);
         }
         // If he is ready or in game, animate the bird !
@@ -89,7 +94,7 @@ define(['../../sharedConstants'], function (Const) {
     };
 
     Player.prototype.updateReadyState = function (readyState) {
-      this._serverInfos.state = (readyState === true) ? enumPlayerState.Ready : enumPlayerState.WaintingInLobby;
+      this._serverInfos.state = (readyState === true) ? enumPlayerState.Ready : enumPlayerState.WaitingInLobby;
       console.log(this._serverInfos.nick + ' is ' + ((this._serverInfos.state == enumPlayerState.Ready) ? 'ready !': 'not yet ready'));
     };
 

@@ -10,7 +10,7 @@
 
 }
 
-body {
+body, ul, li {
 	margin: 0;
 	padding: 0;
 }
@@ -116,14 +116,16 @@ canvas {
 	text-align: center
 }
 
-#gs-ranking > h1 {
+#gs-ranking > h1,
+#gs-highscores > h1 {
 	margin-top: 160px;
 	color: #FD9F4C;
 	font-size: 9em;
 	text-shadow: 5px 0px 0px #40394A, 0px 5px 0px #40394A, -5px 0px 0px #40394A, 0px -5px 0px #40394A;
 }
 
-#gs-ranking-box {
+#gs-ranking-box,
+#gs-highscores-box {
 	height: 200px;
 	width: 400px;
 	margin: auto;
@@ -176,6 +178,39 @@ canvas {
 }
 .gs-ranking-panel:last-child:after {
 	clear: both;
+}
+
+#gs-highscores-scores {
+	padding-top: 10px;
+
+	-webkit-columns: 2;
+	-moz-columns: 2;
+	columns: 2;
+}
+
+#gs-highscores-scores li {
+	position: relative;
+	list-style-type: none;
+	color: #463740;
+	font-size: 32px;
+	margin: 0 0 15px 10px;
+
+	color: white;
+	text-shadow: 3px 0px 0px #40394A, 0px 3px 0px #40394A, -3px 0px 0px #40394A, 0px -3px 0px #40394A;
+}
+
+#gs-highscores-scores li span {
+	color: #ED7958;
+	text-shadow: 0px 2px 0px #FBE9A7;
+	font-size: 0.8em;
+}
+
+#gs-highscores-scores li strong {
+	position: absolute;
+	right: 15px;
+	display: inline-block;
+	margin-left: 5px;
+	font-size: 1.15em;
 }
 
 input[type="text"] {

@@ -17,8 +17,8 @@ var ROTATION_SPEED          = 8;
 function Player (socket, uid, color) {
   this._socket    = socket;
   this._speedY    = 0;
-  this._isInAPipe = false;
   this._rank      = 1;
+  this._lastPipe  = 0;
   this._playerTinyObject = {
       id:         uid,
       nick:       '',
@@ -67,7 +67,6 @@ function Player (socket, uid, color) {
   };
 
   Player.prototype.getID = function () { return (this._playerTinyObject.id); };
-  
   Player.prototype.getState = function () { return (this._playerTinyObject.state); };
   Player.prototype.getScore = function () { return (this._playerTinyObject.score); };
   Player.prototype.getHighScore = function () { return (this._playerTinyObject.best_score); };
@@ -75,6 +74,8 @@ function Player (socket, uid, color) {
   Player.prototype.sorryYouAreDie = function (nbPlayersLeft) {
     this._rank = nbPlayersLeft;
     this._playerTinyObject.state = enums.PlayerState.Died;
+
+    console.info('OMG ! They kill ' + this._playerTinyObject.nick + ' :p');
   };
 
   Player.prototype.setReadyState = function (readyState) {
@@ -84,6 +85,7 @@ function Player (socket, uid, color) {
 
   Player.prototype.setBestScore = function (score) {
     this._playerTinyObject.best_score = score;
+    console.info(this._playerTinyObject.nick + ' just beat his highscore to ' + score);
   };
 
   Player.prototype.isReadyToPlay = function () {
@@ -98,13 +100,15 @@ function Player (socket, uid, color) {
 
   Player.prototype.preparePlayer = function (pos) {
     var line,
-        col;
+        col,
+        randomMoveX;
 
-    // Place bird on the departure grid :p
+    // Place bird on the departure grid
     line = Math.floor(pos / MAX_BIRDS_IN_A_ROW);
-    col = Math.floor(pos % MAX_BIRDS_IN_A_ROW);    
+    col = Math.floor(pos % MAX_BIRDS_IN_A_ROW);
+    randomMoveX = Math.floor(Math.random() * (SPACE_BETWEEN_BIRDS_X / 2 + 1));
     this._playerTinyObject.posY = START_BIRD_POS_Y + line * SPACE_BETWEEN_BIRDS_Y;
-    this._playerTinyObject.posX = START_BIRD_POS_X + col * SPACE_BETWEEN_BIRDS_X;
+    this._playerTinyObject.posX = START_BIRD_POS_X + col * SPACE_BETWEEN_BIRDS_X + randomMoveX;
 
     // Reset usefull values
     this._speedY  = 0;
@@ -116,26 +120,23 @@ function Player (socket, uid, color) {
       this._playerTinyObject.state = enums.PlayerState.WaitingInLobby;
   };  
 
-  Player.prototype.updateScore = function (isEnterAPipe) {
-    // PLayer enters a pipe
-    if (isEnterAPipe == true && this._isInAPipe == false)
-    {
+  Player.prototype.updateScore = function (pipeID) {
+    // If the current pipe ID is different from the last one, it means the players meets a new pipe. So update score
+    if (pipeID != this._lastPipe) {
       this._playerTinyObject.score++;
-      this._isInAPipe = true;
+      this._lastPipe = pipeID;
     }
-    else if (isEnterAPipe == false && this._isInAPipe == true)
-      this._isInAPipe = false;
   };
 
-  Player.prototype.sendScore = function (NBPlayers) {
-    var isNewBestScore = false;
+  Player.prototype.sendScore = function (NBPlayers, HighScores) {
 
+    // Update player best score if he just make a new one !
     if (this._playerTinyObject.score > this._playerTinyObject.best_score) {
       this._playerTinyObject.best_score = this._playerTinyObject.score;
-      isNewBestScore = true;
     }
 
-    this._socket.emit('ranking',  { score: this._playerTinyObject.score, bestScore: this._playerTinyObject.best_score, rank: this._rank, nbPlayers: NBPlayers, newBestScore: isNewBestScore });
+    // Send him complete ranking
+    this._socket.emit('ranking',  { score: this._playerTinyObject.score, bestScore: this._playerTinyObject.best_score, rank: this._rank, nbPlayers: NBPlayers, highscores: HighScores });
   };
   
 

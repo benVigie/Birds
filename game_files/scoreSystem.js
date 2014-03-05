@@ -5,12 +5,11 @@ var DB_USER = 'root';
 var DB_PASS = ''
 var DB_DATA = 'birds'
 
+var NUMBER_OF_HIGHSCORES_TO_RETREIVE = 10;
+
 var isDbAvailable = false;
 
-/*INSERT INTO `highscores` (`hs_id`, `hs_player`, `hs_score`) VALUES (NULL, 'toto', '42');
-UPDATE `highscores` SET `hs_score` = '21' WHERE `highscores`.`hs_player` = 'toto';
-SELECT `hs_score` AS `HS` FROM `highscores` WHERE `hs_player` = 'toto'*/
-
+"SELECT * FROM `highscores` ORDER BY `highscores`.`hs_score` DESC LIMIT 0, 10"
 
 /*
 * This class will store the best score of all players.
@@ -22,7 +21,7 @@ function ScoreSystem () {
   var testConnection;
 
   // Default array
-  this._bestScore = new Array();
+  this._bestScore = [];
 
   testConnection = MySQL.createConnection({
     host     : DB_HOST,
@@ -132,6 +131,7 @@ ScoreSystem.prototype.savePlayerScore = function (player, lastScore) {
         if (rows.affectedRows != 1) {
           console.error('\n\t[MYSQL ERROR] Fail to update ' + nick + ' high score in DB');
         }
+        console.info(nick + ' new high score (' + lastScore + ') was saved in DB !');
 
         // Close connection
         connection.end();
@@ -139,8 +139,63 @@ ScoreSystem.prototype.savePlayerScore = function (player, lastScore) {
     }
     else {
       this._bestScore[nick] = lastScore;
+      console.info(nick + ' new high score (' + lastScore + ') was saved in the score array !');
     }
   }
+};
+
+ScoreSystem.prototype.getHighScores = function (callback) {
+  var connection,
+      hsArray = null,
+      nbRes,
+      i, key;
+
+  // If DB is available, request it highscores
+  if (isDbAvailable === true) {
+
+    // Open connection to DB
+    connection = openConnection();
+    
+    // get the 10 best scores
+    connection.query("SELECT * FROM `highscores` ORDER BY `highscores`.`hs_score` DESC LIMIT 0, " + NUMBER_OF_HIGHSCORES_TO_RETREIVE, function (err, rows, fields) {
+      if (rows.affectedRows <= 0) {
+        console.error('\n\t[MYSQL ERROR] Cannot retreive highscore in DB');
+      }
+      else {
+        nbRes = rows.length;
+        hsArray = [];
+        
+        for (i = 0; i < nbRes; i++) {
+          hsArray.push( { player: rows[i].hs_player, score: rows[i].hs_score } );
+        };
+
+        callback(hsArray);
+      }
+      
+      // Close connection
+      connection.end();
+    });
+  }
+  else {
+    // Sort tab 
+    this._bestScore.sort(function (a, b) {
+      if (a > b)
+        return (-1);
+      if (a < b)
+        return (1);
+      return (0);
+    });
+
+    // Return the NUMBER_OF_HIGHSCORES_TO_RETREIVE best scores
+    hsArray = [];
+    nbRes = (this._bestScore.length > NUMBER_OF_HIGHSCORES_TO_RETREIVE) ? NUMBER_OF_HIGHSCORES_TO_RETREIVE : this._bestScore.length;
+
+    for (key in this._bestScore) {
+      hsArray.push( { player: key, score: this._bestScore[key] } );
+    };
+  }
+
+  callback(hsArray);
 };
 
 module.exports = ScoreSystem;

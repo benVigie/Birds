@@ -22,8 +22,12 @@ function playerLog (socket, nick) {
 
       // Bind new client events
       socket.on('change_ready_state', function (readyState) {
-        _playersManager.changeLobbyState(player, readyState);
-        socket.broadcast.emit('player_ready_state', player.getPlayerObject());
+        
+        // If the server is currently waiting for players, update ready state
+        if (_gameState == enums.ServerState.WaitingForPlayers) {
+          _playersManager.changeLobbyState(player, readyState);
+          socket.broadcast.emit('player_ready_state', player.getPlayerObject());
+        }
       });
       socket.on('player_jump', function () {
         player.jump();
@@ -110,7 +114,6 @@ function startGameLoop () {
     var now = new Date().getTime(),
         ellapsedTime = 0,
         plList;
-
 
     // get time difference between the last call and now
     if (_lastTime) {

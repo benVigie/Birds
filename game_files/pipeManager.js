@@ -6,7 +6,7 @@ var util          = require('util'),
 
 var FIRST_PIPE_POSX           = Const.SCREEN_WIDTH + 100;
 var SPAWN_PIPE_ALERT          = Const.SCREEN_WIDTH;
-var MAX_PIPE_CHECK_COLLISION  = 2;
+var MAX_PIPE_CHECK_COLLISION  = 3;
 
 var _pipeList = new Array(),
     _socket = null;
@@ -74,9 +74,8 @@ PipeManager.prototype.getPotentialPipeHit = function () {
   if (nbPipes > MAX_PIPE_CHECK_COLLISION)
     nbPipes = MAX_PIPE_CHECK_COLLISION;
 
-  --nbPipes;
   for (i = 0; i < nbPipes; i++) {
-      pipes.push(_pipeList[i].getPipeObject());
+    pipes.push(_pipeList[i].getPipeObject());
   };
 
   return (pipes);

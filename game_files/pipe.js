@@ -2,6 +2,7 @@ var Const = require('../sharedConstants').constant;
 
 function Pipe (lastPipePosX) {
   this._pipeTinyObject = {
+    id:   new Date().getTime(),
     posX: (lastPipePosX + Const.DISTANCE_BETWEEN_PIPES),
     posY: Math.floor(Math.random() * ((Const.MAX_PIPE_HEIGHT - Const.HEIGHT_BETWEEN_PIPES)- Const.MIN_PIPE_HEIGHT + 1) + Const.MIN_PIPE_HEIGHT)
   };

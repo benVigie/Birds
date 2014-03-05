@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    script(rel='stylesheet', src=wsAddress + '/socket.io/socket.io.js').
+    script(type='text/javascript', src=wsAddress + '/socket.io/socket.io.js').
     
     <link href="/images/favicon.ico" rel="icon" type="image/ico" />
     <meta charset='utf-8'>
@@ -52,6 +52,15 @@ html
             <strong id="gs-ranking-best" class="gs-ranking-text">-</strong>
             
           </div>
+        </div>
+      </div>
+
+      <div id="gs-highscores" class="inGamePanel">
+        <h1 id="gs-highscores-title">High Scores</h1>
+        <div id="gs-highscores-box">
+          <ul id="gs-highscores-scores">
+            
+          </ul>
         </div>
       </div>
 

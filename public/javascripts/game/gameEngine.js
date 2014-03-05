@@ -13,6 +13,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   var enumPanels = {
     Login: 'gs-login',
     Ranking: 'gs-ranking',
+    HighScores: 'gs-highscores',
     Error: 'gs-error'
   };
 
@@ -25,13 +26,14 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _rankingTimer,
       _ranking_time,
       _isTouchDevice = false,
-      _socket
+      _socket,
+      _infPanlTimer,
       _isNight = false;
 
   function draw (currentTime, ellapsedTime) {
 
-    // If player score is > 20, night !!
-    if ((_gameState == enumState.OnGame) && (_playerManager.getCurrentPlayer().getScore() == 10))
+    // If player score is > 15, night !!
+    if ((_gameState == enumState.OnGame) && (_playerManager.getCurrentPlayer().getScore() == 15))
       _isNight = true;
 
     canvasPainter.draw(currentTime, ellapsedTime, _playerManager, _pipeList, _gameState, _isNight);
@@ -103,7 +105,6 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       // Draw bg and bind button click
       draw(0, 0);
       showHideMenu(enumPanels.Login, true);
-      // showHideMenu(enumPanels.Ranking, true);
       document.getElementById('player-connection').onclick = loadGameRoom;
   
     });
@@ -174,11 +175,17 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       _userID = uuid;
       changeGameState(serverState);
 
-      // Display a little help text
-      if (_isTouchDevice == false)
-        infoPanel(true, 'Press <strong>space</strong> to fly !', 3000);
-      else
-        infoPanel(true, '<strong>Tap</strong> to fly !', 3000);
+      // Display a message according to the game state
+      if (serverState == enumState.OnGame) {
+        infoPanel(true, '<strong>Please wait</strong> for the previous game to finish...');
+      }
+      else {
+        // Display a little help text
+        if (_isTouchDevice == false)
+          infoPanel(true, 'Press <strong>space</strong> to fly !', 3000);
+        else
+          infoPanel(true, '<strong>Tap</strong> to fly !', 3000);
+      }
     });
   
     // Get input
@@ -200,7 +207,11 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   }
 
   function displayRanking (score) {
-    var nodeMedal = document.querySelector('.gs-ranking-medal');
+    var nodeMedal = document.querySelector('.gs-ranking-medal'),
+        nodeHS = document.getElementById('gs-highscores-scores'),
+        i, nbHs;
+
+    console.log(score);
 
     // Remove previous medals just in case
     nodeMedal.classList.remove('third');
@@ -220,8 +231,21 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     else if (score.rank == 3)
       nodeMedal.classList.add('third');
 
-    // Show menu
+    // Display hish scores
+    nodeHS.innerHTML = '';
+    nbHs = score.highscores.length;
+    for (i = 0; i < nbHs; i++) {
+      nodeHS.innerHTML += '<li><span>#' + (i + 1) + '</span> ' + score.highscores[i].player + ' <strong>' + score.highscores[i].score + '</strong></li>';
+    };
+
+    // Show ranking
     showHideMenu(enumPanels.Ranking, true);
+
+    // Display hish scores in a middle of the waiting time
+    window.setTimeout(function () {
+      showHideMenu(enumPanels.HighScores, true);
+    },
+    Const.TIME_BETWEEN_GAMES / 2);
 
     // reset graphics in case to prepare the next game
     canvasPainter.resetForNewGame();
@@ -313,6 +337,12 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   function infoPanel (isShow, htmlText, timeout) {
     var topBar   = document.getElementById('gs-info-panel');
 
+    // Reset timer if there is one pending
+    if (_infPanlTimer != null) {
+      window.clearTimeout(_infPanlTimer);
+      _infPanlTimer = null;
+    }
+
     // Hide the bar
     if (isShow == false) {
       topBar.classList.remove('showTopBar');
@@ -323,7 +353,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
         topBar.innerHTML = htmlText;
       // If a timeout is specified, close the bar after this time !
       if (timeout)
-        setTimeout(function() {
+        _infPanlTimer = setTimeout(function() {
           infoPanel(false);
         }, timeout);
 
