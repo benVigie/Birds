@@ -19,7 +19,9 @@ define(['parallax', 'backgroundressources', '../../sharedConstants'], function (
     'images/clumsy.png',
     'images/clumsy-blue.png',
     'images/clumsy-red.png',
-    'images/clumsy-multi.png'
+    'images/clumsy-multi.png',
+    'images/clumsy_flashy.png',
+    'images/flappy_flippant.png'
   ];
 
   var that = {},

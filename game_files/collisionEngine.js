@@ -32,16 +32,22 @@ function checkBirdCollision (pipe, birdInstance) {
 
 exports.checkCollision = function (pipe, birdsList) {
   var thereIsCollision = false,
-      i;
+      pipeLength = pipe.length,
+      birdLength = birdsList.length,
+      i,
+      j;
 
-  for (i = 0; i < birdsList.length; i++) {
+  for (i = 0; i < pipeLength; i++) {
     
-    if (checkBirdCollision(pipe, birdsList[i]) == true) {
-      // Change player state to died
-      birdsList[i].sorryYouAreDie(birdsList.length);
+    for (j = 0; j < birdsList.length; j++) {
+      
+      if (checkBirdCollision(pipe[i], birdsList[j]) == true) {
+        // Change player state to died
+        birdsList[j].sorryYouAreDie(birdsList.length);
 
-      thereIsCollision = true;
-    }
+        thereIsCollision = true;
+      }
+    };
   };
 
   return (thereIsCollision);
