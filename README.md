@@ -9,7 +9,7 @@ Multiplayer clone of flappy bird powered by node.js !
 
 2. Download the project and go into the project directory with your console
 
-3. Install dependecies with `npm install`
+3. Install dependecies bt typing `npm install` in your console
 
 4. If you want to change the server port or the websocket address or port, update the file *sharedConstants.js*
 
@@ -17,9 +17,9 @@ Multiplayer clone of flappy bird powered by node.js !
 
 6. Open your browser and navigate to `http://yourserver:port/birds` (by default `http://localhost:4242/birds`)
 
-7. Play ! ;)
+7. Play ! :smile:
 
-### Optional
+#### Optional
 
 If you play as it, players score are store into an array. If you want to save scores in a persistent way, you can install the database birds on a MySQL server.
 
@@ -31,6 +31,19 @@ If you play as it, players score are store into an array. If you want to save sc
 ##Node Dependencies
 
 **Birds.js** uses express, jade, socket.io and mysql modules.
+
+
+##Features
+
+* Multiplayer game !
+
+* Parallax background
+
+* Persistent scores
+
+* Sunset effect if you good enough :wink:
+
+* Mass fun !
 
 
 ## Notes
