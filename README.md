@@ -3,6 +3,8 @@ Birds.js
 
 Multiplayer clone of flappy bird powered by node.js !
 
+![Birds.js](http://imageshack.com/a/img819/6563/r4pf.png "Birds.js")
+
 ##How to install
 
 1. Install [Node.js](http://nodejs.org/)
@@ -42,6 +44,8 @@ If you play as it, players score are store into an array. If you want to save sc
 * Persistent scores
 
 * Sunset effect if you good enough :wink:
+
+* Easy customization - Simply edit constants to change number of pipes, space between them, bird physic, etc...
 
 * Mass fun !
 
