@@ -3,7 +3,7 @@ var constant = {
 
   SERVER_PORT:              4242,
   SOCKET_PORT:              1337,
-  SOCKET_ADDR:              'http://192.168.1.76',
+  SOCKET_ADDR:              'http://localhost',
 
   SCREEN_WIDTH:             900,
   SCREEN_HEIGHT:            768,
