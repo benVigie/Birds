@@ -370,10 +370,10 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   else
     _isTouchDevice = false;
   
-  // Load ressources and Start the client !
-  console.log('Client started, load ressources...');
-  canvasPainter.loadRessources(function () {
-    console.log('Ressources loaded, connect to server...');
+  // Load resources and Start the client !
+  console.log('Client started, load resources...');
+  canvasPainter.loadResources(function () {
+    console.log('Resources loaded, connect to server...');
     startClient();
   });
 

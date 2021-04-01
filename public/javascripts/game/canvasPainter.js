@@ -1,9 +1,9 @@
 /*
 *   Class to manage the canvas. Draw players, backgrounds, etc...  
 */
-define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (Parallax, BgRessources, Const) {
+define(['parallax', 'backgroundResources', '../../sharedConstants'], function (Parallax, BgResources, Const) {
 
-  // Sprite ressource dimensions
+  // Sprite resource dimensions
   var SPRITE_PIPE_HEIGHT  = 768;
   var SPRITE_PIPE_WIDTH   = 148;
 
@@ -11,8 +11,8 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
   var SCORE_POS_Y         = 200;
   var SCORE_SHADOW_OFFSET = 5;
 
-  // Ressources
-  var NB_RESSOURCES_TO_LOAD   = 2;
+  // Resources
+  var NB_RESOURCES_TO_LOAD   = 2;
 
   // Birds sprites
   var BIRDS_SPRITES = [
@@ -26,8 +26,8 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
       ctx = document.getElementById('gs-canvas').getContext('2d'),
       _isReadyToDraw = false,
 
-      // Ressources
-      _nbRessourcesToLoad = getNbRessourcesToLoad(),
+      // Resources
+      _nbResourcesToLoad = getNbResourcesToLoad(),
       _picGround,
       _parallaxGround,
       _picPipe,
@@ -35,20 +35,20 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
       _picBirds = new Array();
 
 
-  function getNbRessourcesToLoad () {
-    var nbRessources = NB_RESSOURCES_TO_LOAD + BIRDS_SPRITES.length,
-        nbBg = BgRessources.length,
+  function getNbResourcesToLoad () {
+    var nbResources = NB_RESOURCES_TO_LOAD + BIRDS_SPRITES.length,
+        nbBg = BgResources.length,
         i;
 
-    // Search number of BG ressources
+    // Search number of BG resources
     for (i = 0; i < nbBg; i++) {
-      if (typeof BgRessources[i].daySrc !== 'undefined')
-        nbRessources++;
-      if (typeof BgRessources[i].nightSrc !== 'undefined')
-        nbRessources++;
+      if (typeof BgResources[i].daySrc !== 'undefined')
+        nbResources++;
+      if (typeof BgResources[i].nightSrc !== 'undefined')
+        nbResources++;
     };
 
-    return (nbRessources);
+    return (nbResources);
   }
 
   function drawPipe (pipe) {
@@ -76,7 +76,7 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
         players = playerManager.getPlayers();
 
     if (!_isReadyToDraw) {
-      console.log('[ERROR] : Ressources not yet loaded !');
+      console.log('[ERROR] : Resources not yet loaded !');
       return;
     }
 
@@ -126,7 +126,7 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
     };
   };
 
-  that.loadRessources = function (onReadyCallback) {
+  that.loadResources = function (onReadyCallback) {
     var bird,
         dBg,
         nBg,
@@ -135,59 +135,59 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
     // Load ground
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
-    _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
+    _picGround.onload = function() { onResourceLoaded(onReadyCallback); };
     _parallaxGround = new Parallax(_picGround, null, 900, 96, Const.LEVEL_SPEED, window.innerHeight - 96, Const.SCREEN_WIDTH);
 
     // Load pipe
     _picPipe = new Image();
     _picPipe.src = 'images/pipe.png';
-    _picPipe.onload = function() { onRessourceLoaded(onReadyCallback); };    
+    _picPipe.onload = function() { onResourceLoaded(onReadyCallback); };
 
     // Load birds sprites
     for (i = 0; i < BIRDS_SPRITES.length; i++) {
       bird = new Image();
       bird.src = BIRDS_SPRITES[i];
-      bird.onload = function() { onRessourceLoaded(onReadyCallback); };
+      bird.onload = function() { onResourceLoaded(onReadyCallback); };
       // Add bird sprite in our array
       _picBirds.push(bird);
     };
 
     // Load Backgrounds
     // Be carefull, the position in the array matters. First add, first draw !
-    for (i = 0; i < BgRessources.length; i++) {
+    for (i = 0; i < BgResources.length; i++) {
 
-      // If a day ressource exists for thi BG, load it
-      if (typeof BgRessources[i].daySrc !== 'undefined') {
+      // If a day resource exists for thi BG, load it
+      if (typeof BgResources[i].daySrc !== 'undefined') {
         dBg = new Image();
-        dBg.src = BgRessources[i].daySrc;
-        dBg.onload = function() { onRessourceLoaded(onReadyCallback); };
+        dBg.src = BgResources[i].daySrc;
+        dBg.onload = function() { onResourceLoaded(onReadyCallback); };
       }
       else
         dBg = null;
 
       // The same for night version of this bg...
-      if (typeof BgRessources[i].nightSrc !== 'undefined') {
+      if (typeof BgResources[i].nightSrc !== 'undefined') {
         nBg = new Image();
-        nBg.src = BgRessources[i].nightSrc;
-        nBg.onload = function() { onRessourceLoaded(onReadyCallback); };
+        nBg.src = BgResources[i].nightSrc;
+        nBg.onload = function() { onResourceLoaded(onReadyCallback); };
       }
       else
         nBg = null;
 
-      // Create a parallax obj with this ressource and add it in the bg array
-      _picBG.push(new Parallax(dBg, nBg, BgRessources[i].width, BgRessources[i].height, BgRessources[i].speed, BgRessources[i].posY, Const.SCREEN_WIDTH));
+      // Create a parallax obj with this resource and add it in the bg array
+      _picBG.push(new Parallax(dBg, nBg, BgResources[i].width, BgResources[i].height, BgResources[i].speed, BgResources[i].posY, Const.SCREEN_WIDTH));
     };
 
 
-    function onRessourceLoaded (onReadyCallback) {
-      var totalRessources = getNbRessourcesToLoad();
+    function onResourceLoaded (onReadyCallback) {
+      var totalResources = getNbResourcesToLoad();
       
-      if (--_nbRessourcesToLoad <= 0) {
+      if (--_nbResourcesToLoad <= 0) {
         _isReadyToDraw = true;
         onReadyCallback();
       }
       else {
-        document.getElementById('gs-loader-text').innerHTML = ('Load ressource ' + (totalRessources - _nbRessourcesToLoad) + ' / ' + totalRessources);
+        document.getElementById('gs-loader-text').innerHTML = ('Load resource ' + (totalResources - _nbResourcesToLoad) + ' / ' + totalResources);
       }
     };
 

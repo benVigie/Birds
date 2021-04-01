@@ -1,15 +1,15 @@
 /*
-*   Each BG ressource is an instance of ParallaxBg.
-*   Its attributes are getted in a json ressource.
-*   Basicaly, each ParallaxBg have a pic ressource, a size, a pos, a speed and a type (day or night)
+*   Each BG resource is an instance of ParallaxBg.
+*   Its attributes are gotten in a json resource.
+*   Basicaly, each ParallaxBg have a pic resource, a size, a pos, a speed and a type (day or night)
 */
 define(function() {
 
   var SMOOTH_DAY_NIGHHT_TRANSITION_DURATION = 2000;
 
-  function ParallaxBg (dayRessource, nightRessource, width, height, speed, posY, screenWidth) {
-    this.dPic       = dayRessource;
-    this.nPic       = nightRessource;
+  function ParallaxBg (dayResource, nightResource, width, height, speed, posY, screenWidth) {
+    this.dPic       = dayResource;
+    this.nPic       = nightResource;
     this.speed      = speed;
     this.posY       = posY;
     this.posX       = 0;
@@ -40,7 +40,7 @@ define(function() {
       if ((this.dPic) && (this.nightOpacity != 1))
         ctx.drawImage(this.dPic, drawPos, this.posY, this.width, this.height);
 
-      // If we are in night cycle, redraw the bg with the opaque night ressource
+      // If we are in night cycle, redraw the bg with the opaque night resource
       if ((this.nPic) && (this.nightCycle == true)) {
 
         // If it's not full night, save context and apply opacity on the night picture
