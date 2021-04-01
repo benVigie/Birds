@@ -13,6 +13,11 @@
 body, ul, li {
 	margin: 0;
 	padding: 0;
+	user-select: none; /* standard syntax */
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+	-moz-user-select: none; /* mozilla browsers */
+	-khtml-user-select: none; /* webkit (konqueror) browsers */
+	-ms-user-select: none; /* IE10+ */
 }
 
 h1, h2 {
@@ -24,9 +29,13 @@ h1, h2 {
 	text-align: center;
 }
 
+html {
+	overflow: hidden;
+}
+
 #gameScreen {
-	position: relative;
-	height: 768px;
+	position: fixed;
+	height: 100%;
 	width: 900px;
 
 	margin: auto;

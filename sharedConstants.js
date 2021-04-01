@@ -11,8 +11,8 @@ var constant = {
   LEVEL_SPEED:              0.3,
   TIME_BETWEEN_GAMES:       5000,
 
-  BIRD_WIDTH:               42,
-  BIRD_HEIGHT:              30,
+  BIRD_WIDTH:               52,
+  BIRD_HEIGHT:              40,
 
   // Pipe constants
   PIPE_WIDTH:               100,

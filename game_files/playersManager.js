@@ -164,9 +164,10 @@ PlayersManager.prototype.sendPlayerScore = function () {
 
 };
 
-PlayersManager.prototype.prepareNewPlayer = function (player, nickname) {
+PlayersManager.prototype.prepareNewPlayer = function (player, nickname, floor) {
   // Set his nickname
   player.setNick(nickname);
+  player.setFloor(floor)
 
   // retreive his highscore
   _scores.setPlayerHighScore(player);

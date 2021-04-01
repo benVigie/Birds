@@ -28,7 +28,8 @@ function Player (socket, uid, color) {
       best_score: 0,
       state:      enums.PlayerState.OnLoginScreen,
       posX:       0,
-      posY:       0
+      posY:       0,
+      floor:      0
     };
   };
 
@@ -65,6 +66,10 @@ function Player (socket, uid, color) {
     this._playerTinyObject.nick = nick;
     console.info('Please call me [' + nick + '] !');
   };
+
+  Player.prototype.setFloor = function (floor) {
+    this._playerTinyObject.floor = floor
+  }
 
   Player.prototype.getID = function () { return (this._playerTinyObject.id); };
   Player.prototype.getState = function () { return (this._playerTinyObject.state); };

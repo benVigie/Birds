@@ -21,7 +21,7 @@ function checkBirdCollision (pipe, birdInstance) {
   }
   
   // If the bird hit the ground
-  if (bird.posY + Const.BIRD_HEIGHT > Const.FLOOR_POS_Y) {
+  if (bird.posY + Const.BIRD_HEIGHT > bird.floor) {
     return (true);
   }
 

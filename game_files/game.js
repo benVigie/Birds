@@ -12,7 +12,7 @@ var _playersManager,
     _lastTime = null;
 
 
-function playerLog (socket, nick) {
+function playerLog (socket, nick, floor) {
   // Retreive PlayerInstance
   socket.get('PlayerInstance', function (error, player) {
 
@@ -34,7 +34,7 @@ function playerLog (socket, nick) {
       });
 
       // Set player's nickname and prepare him for the next game
-      _playersManager.prepareNewPlayer(player, nick);
+      _playersManager.prepareNewPlayer(player, nick, floor);
 
       // Notify new client about other players AND notify other about the new one ;)
       socket.emit('player_list', _playersManager.getPlayerList());
@@ -185,9 +185,9 @@ exports.startServer = function () {
         player = null;
       });
     });
-    socket.on('say_hi', function (nick, fn) {
+    socket.on('say_hi', function (nick, floor, fn) {
       fn(_gameState, player.getID());
-      playerLog(socket, nick);
+      playerLog(socket, nick, floor);
     });
 
     // Remember PlayerInstance and push it to the player list

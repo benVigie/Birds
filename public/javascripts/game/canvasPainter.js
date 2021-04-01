@@ -82,7 +82,7 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
 
     // First, draw the background
     ctx.fillStyle = '#0099CC';
-    ctx.fillRect(0, 0, Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+    ctx.fillRect(0, 0, Const.SCREEN_WIDTH, window.innerHeight - 96);
     
     // Then backgrounds pictures
     nb = _picBG.length;
@@ -136,7 +136,7 @@ define(['parallax', 'backgroundRessources', '../../sharedConstants'], function (
     _picGround = new Image();
     _picGround.src = 'images/ground.png';
     _picGround.onload = function() { onRessourceLoaded(onReadyCallback); };
-    _parallaxGround = new Parallax(_picGround, null, 900, 96, Const.LEVEL_SPEED, 672, Const.SCREEN_WIDTH);
+    _parallaxGround = new Parallax(_picGround, null, 900, 96, Const.LEVEL_SPEED, window.innerHeight - 96, Const.SCREEN_WIDTH);
 
     // Load pipe
     _picPipe = new Image();

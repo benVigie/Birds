@@ -14,7 +14,7 @@ define(['../../sharedConstants'], function (Const) {
         nightSrc: 'images/night-clouds.png',
         width: 300,
         height: 256,
-        posY: 416,
+        posY: window.innerHeight - 352,
         speed: Const.LEVEL_SPEED / 3
       },
       {
@@ -22,7 +22,7 @@ define(['../../sharedConstants'], function (Const) {
         nightSrc: 'images/night-city.png',
         width: 300,
         height: 256,
-        posY: 416,
+        posY: window.innerHeight - 352,
         speed: Const.LEVEL_SPEED / 2
       },
       {
@@ -30,7 +30,7 @@ define(['../../sharedConstants'], function (Const) {
         nightSrc: 'images/night-trees.png',
         width: 300,
         height: 216,
-        posY: 456,
+        posY: window.innerHeight - 312,
         speed: Const.LEVEL_SPEED
       }
     ]);
