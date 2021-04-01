@@ -12,6 +12,7 @@ var _playersManager,
     _lastTime = null;
 
 
+// @TODO extend here with room id, then move all the above into array
 function playerLog (socket, nick, floor) {
   // Retreive PlayerInstance
   socket.get('PlayerInstance', function (error, player) {
