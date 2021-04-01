@@ -1,4 +1,3 @@
-var NUMBER_OF_HIGHSCORES_TO_RETREIVE = 10;
 /*
 * This class will store the best score of all players.
 * It will try to reach a DB by default (best way to store datas). But if you don't have a MySQL server or if the class
