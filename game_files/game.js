@@ -1,10 +1,10 @@
-var PlayersManager    = require('./playersManager'),
-    PipeManager       = require('./pipeManager'),
-    CollisionEngine   = require('./collisionEngine'),
-    enums             = require('./enums'),
-    Const             = require('../sharedConstants').constant;
+const PlayersManager = require('./playersManager'),
+    PipeManager = require('./pipeManager'),
+    CollisionEngine = require('./collisionEngine'),
+    enums = require('./enums'),
+    Const = require('../sharedConstants').constant;
 
-var _playersManager,
+let _playersManager,
     _pipeManager,
     io,
     _gameState,
@@ -25,7 +25,7 @@ function playerLog (socket, nick, floor) {
       socket.on('change_ready_state', function (readyState) {
         
         // If the server is currently waiting for players, update ready state
-        if (_gameState == enums.ServerState.WaitingForPlayers) {
+        if (_gameState === enums.ServerState.WaitingForPlayers) {
           _playersManager.changeLobbyState(player, readyState);
           socket.broadcast.emit('player_ready_state', player.getPlayerObject());
         }
@@ -69,7 +69,7 @@ function updateGameState (newState, notifyClients) {
 }
 
 function createNewGame () {
-  var players,
+  let players,
       i;
 
   // Flush pipe list
@@ -79,16 +79,13 @@ function createNewGame () {
   players = _playersManager.resetPlayersForNewGame();
   for (i = 0; i < players.length; i++) {
     io.sockets.emit('player_ready_state', players[i]);
-  };
+  }
 
   // Notify players of the new game state
   updateGameState(enums.ServerState.WaitingForPlayers, true);
-};
+}
 
 function gameOver() {
-  var players,
-      i;
-
   // Stop game loop
   clearInterval(_timer);
   _lastTime = null;
@@ -101,7 +98,7 @@ function gameOver() {
 
   // After 5s, create a new game
   setTimeout(createNewGame, Const.TIME_BETWEEN_GAMES);
-};
+}
 
 function startGameLoop () {
   // Change server state
@@ -127,7 +124,7 @@ function startGameLoop () {
     _lastTime = now;
     
     // If everyone has quit the game, exit it
-    if (_playersManager.getNumberOfPlayers() == 0) {
+    if (_playersManager.getNumberOfPlayers() === 0) {
       gameOver();
     }
 
@@ -138,8 +135,8 @@ function startGameLoop () {
     _pipeManager.updatePipes(ellapsedTime);
 
     // Check collisions
-    if (CollisionEngine.checkCollision(_pipeManager.getPotentialPipeHit(), _playersManager.getPlayerList(enums.PlayerState.Playing)) == true) {
-      if (_playersManager.arePlayersStillAlive() == false) {
+    if (CollisionEngine.checkCollision(_pipeManager.getPotentialPipeHit(), _playersManager.getPlayerList(enums.PlayerState.Playing))) {
+      if (!_playersManager.arePlayersStillAlive()) {
         gameOver();
       }
     }

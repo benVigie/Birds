@@ -8,12 +8,12 @@ var FIRST_PIPE_POSX           = Const.SCREEN_WIDTH + 100;
 var SPAWN_PIPE_ALERT          = Const.SCREEN_WIDTH;
 var MAX_PIPE_CHECK_COLLISION  = 3;
 
-var _pipeList = new Array(),
+var _pipeList = [],
     _socket = null;
 
 function PipeManager () {
   EventEmitter.call(this);
-};
+}
 
 util.inherits(PipeManager, EventEmitter);
 
@@ -39,33 +39,33 @@ PipeManager.prototype.updatePipes = function (time) {
       i;
 
   // If the first pipe is out of the screen, erase it
-  if (_pipeList[0].canBeDroped() == true) {
+  if (_pipeList[0].canBeDroped()) {
     _pipeList.shift();
     nbPipes--;
   }
 
   for (i = 0; i < nbPipes; i++) {
     _pipeList[i].update(time);
-  };
+  }
 
   if (_pipeList[nbPipes - 1].getPipeObject().posX < SPAWN_PIPE_ALERT)
     this.emit('need_new_pipe');
 };
 
 PipeManager.prototype.getPipeList = function () {
-  var pipes = new Array(),
+  let pipes = [],
       nbPipes = _pipeList.length,
       i;
 
   for (i = 0; i < nbPipes; i++) {
       pipes.push(_pipeList[i].getPipeObject());
-  };
+  }
 
   return (pipes);
 };
 
 PipeManager.prototype.getPotentialPipeHit = function () {
-  var pipes = new Array(),
+  let pipes = [],
       nbPipes = _pipeList.length,
       i;
 
@@ -76,13 +76,13 @@ PipeManager.prototype.getPotentialPipeHit = function () {
 
   for (i = 0; i < nbPipes; i++) {
     pipes.push(_pipeList[i].getPipeObject());
-  };
+  }
 
   return (pipes);
 };
 
 PipeManager.prototype.flushPipeList = function () {
-  _pipeList = new Array();
+  _pipeList = [];
 };
 
 

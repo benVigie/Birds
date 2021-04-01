@@ -1,17 +1,17 @@
-var enums   = require('./enums'),
-    Const   = require('../sharedConstants').constant;
+const enums = require('./enums'),
+    Const = require('../sharedConstants').constant;
 
 // Defines
-var MAX_BIRDS_IN_A_ROW      = 3;
-var START_BIRD_POS_X        = 100;
-var SPACE_BETWEEN_BIRDS_X   = 120;
-var START_BIRD_POS_Y        = 100;
-var SPACE_BETWEEN_BIRDS_Y   = 100;
-var GRAVITY_SPEED           = 0.05;
-var JUMP_SPEED              = -0.6;
-var MAX_ROTATION            = -10;
-var MIN_ROTATION            = 60;
-var ROTATION_SPEED          = 8;
+const MAX_BIRDS_IN_A_ROW = 3;
+const START_BIRD_POS_X        = 100;
+const SPACE_BETWEEN_BIRDS_X   = 120;
+const START_BIRD_POS_Y        = 100;
+const SPACE_BETWEEN_BIRDS_Y   = 100;
+const GRAVITY_SPEED           = 0.05;
+const JUMP_SPEED              = -0.6;
+const MAX_ROTATION            = -10;
+const MIN_ROTATION            = 60;
+const ROTATION_SPEED          = 8;
 
 
 function Player (socket, uid, color) {
@@ -31,13 +31,13 @@ function Player (socket, uid, color) {
       posY:       0,
       floor:      0
     };
-  };
+  }
 
   Player.prototype.update = function (timeLapse) {
     // console.info('Update player ' + this._playerTinyObject.nick);
     
     // If player is still alive, update its Y position
-    if (this._playerTinyObject.state == enums.PlayerState.Playing) {
+    if (this._playerTinyObject.state === enums.PlayerState.Playing) {
       // calc now Y pos
       this._speedY += GRAVITY_SPEED;
       this._playerTinyObject.posY += Math.round(timeLapse * this._speedY);
@@ -48,7 +48,7 @@ function Player (socket, uid, color) {
         this._playerTinyObject.rotation = MIN_ROTATION;
     }
     // If he's died, update it's X position
-    else if (this._playerTinyObject.state == enums.PlayerState.Died) {
+    else if (this._playerTinyObject.state === enums.PlayerState.Died) {
       this._playerTinyObject.posX -= Math.floor(timeLapse * Const.LEVEL_SPEED);
     }
     else {
@@ -84,8 +84,8 @@ function Player (socket, uid, color) {
   };
 
   Player.prototype.setReadyState = function (readyState) {
-    this._playerTinyObject.state = (readyState == true) ? enums.PlayerState.Playing : enums.PlayerState.WaitingInLobby;
-    console.info(this._playerTinyObject.nick + ' is ' + ((this._playerTinyObject.state == enums.PlayerState.Playing) ? 'ready !' : 'not yet ready'));
+    this._playerTinyObject.state = readyState ? enums.PlayerState.Playing : enums.PlayerState.WaitingInLobby;
+    console.info(this._playerTinyObject.nick + ' is ' + ((this._playerTinyObject.state === enums.PlayerState.Playing) ? 'ready !' : 'not yet ready'));
   };
 
   Player.prototype.setBestScore = function (score) {
@@ -94,9 +94,7 @@ function Player (socket, uid, color) {
   };
 
   Player.prototype.isReadyToPlay = function () {
-    if (this._playerTinyObject.state == enums.PlayerState.Playing)
-      return (true);
-    return (false);
+    return this._playerTinyObject.state === enums.PlayerState.Playing
   };
 
   Player.prototype.getPlayerObject = function () {
@@ -104,7 +102,7 @@ function Player (socket, uid, color) {
   };
 
   Player.prototype.preparePlayer = function (pos) {
-    var line,
+    let line,
         col,
         randomMoveX;
 
@@ -121,13 +119,13 @@ function Player (socket, uid, color) {
     this._playerTinyObject.score    =  0;
     this._playerTinyObject.rotation =  0;
     // Update all register players
-    if (this._playerTinyObject.nick != '')
+    if (this._playerTinyObject.nick !== '')
       this._playerTinyObject.state = enums.PlayerState.WaitingInLobby;
   };  
 
   Player.prototype.updateScore = function (pipeID) {
     // If the current pipe ID is different from the last one, it means the players meets a new pipe. So update score
-    if (pipeID != this._lastPipe) {
+    if (pipeID !== this._lastPipe) {
       this._playerTinyObject.score++;
       this._lastPipe = pipeID;
     }

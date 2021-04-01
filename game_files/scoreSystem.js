@@ -9,11 +9,11 @@ function ScoreSystem () {
 
   // Default array
   this._bestScore = [];
-};
+}
 
 
 ScoreSystem.prototype.setPlayerHighScore = function (player) {
-  var nick = player.getNick();
+  const nick = player.getNick();
 
   if (typeof this._bestScore[nick] != 'undefined')
     player.setBestScore(this._bestScore[nick]);
@@ -22,7 +22,7 @@ ScoreSystem.prototype.setPlayerHighScore = function (player) {
 };
 
 ScoreSystem.prototype.savePlayerScore = function (player, lastScore) {
-  var nick = player.getNick(),
+  const nick = player.getNick(),
       highScore = player.getHighScore();
 
   // If the player just beats his highscore, record it !
@@ -33,10 +33,10 @@ ScoreSystem.prototype.savePlayerScore = function (player, lastScore) {
 };
 
 ScoreSystem.prototype.getHighScores = function (callback) {
-  var hsArray = null,
+  let hsArray = null,
       key;
 
-    // Sort tab 
+  // Sort tab
   this._bestScore.sort(function (a, b) {
     if (a > b)
       return (-1);
@@ -50,7 +50,7 @@ ScoreSystem.prototype.getHighScores = function (callback) {
 
   for (key in this._bestScore) {
     hsArray.push( { player: key, score: this._bestScore[key] } );
-  };
+  }
 
 
   callback(hsArray);

@@ -12,21 +12,17 @@ function checkBirdCollision (pipe, birdInstance) {
 
     // Check if the bird touch the upper pipe
     if (bird.posY < pipe.posY)
-      return (true);
+      return true;
 
     // Check if the bird touch the ground pipe
     if ((bird.posY + Const.BIRD_HEIGHT) > (pipe.posY + Const.HEIGHT_BETWEEN_PIPES)) {
-      return (true);
+      return true;
     }
   }
   
   // If the bird hit the ground
-  if (bird.posY + Const.BIRD_HEIGHT > bird.floor) {
-    return (true);
-  }
-
-  return (false);
-};
+  return bird.posY + Const.BIRD_HEIGHT > bird.floor;
+}
 
 exports.checkCollision = function (pipe, birdsList) {
   var thereIsCollision = false,
