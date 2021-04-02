@@ -5,13 +5,21 @@ import { ServerState, PlayerState } from "./enums";
 import { constants as Const } from "../constants";
 import { ServerStateEnum } from "../shared";
 
-let _playersManager;
-let _pipeManager;
-let io;
-let _gameState;
-let _timeStartGame;
+let _playersManager: PlayersManager;
+
+let _pipeManager: PipeManager;
+
+/**
+ * @todo convert to Socket.io instance
+ */
+let io: any;
+
+let _gameState: ServerStateEnum;
+
+let _timeStartGame: number;
 
 let _lastTime: number | null = null;
+
 let _timer: NodeJS.Timeout;
 
 // @TODO extend here with room id, then move all the above into array
