@@ -1,6 +1,6 @@
 import { constants as Const } from "../constants";
 
-export class Pipe {
+export default class Pipe {
   private _pipeTinyObject: {
     id: number;
     posX: number;
