@@ -11,5 +11,5 @@ const enumPlayerState = {
   Died: 4,
 };
 
-exports.PlayerState = enumPlayerState;
-exports.ServerState = enumServerState;
+export const PlayerState = enumPlayerState;
+export const ServerState = enumServerState;
