@@ -1,23 +1,16 @@
 import { EventEmitter } from "events";
-import { inherits } from "util";
-import { constant as Const } from "../constantss";
+import { constants as Const } from "../constants";
 import Pipe from "./pipe";
 
 let FIRST_PIPE_POSX = Const.SCREEN_WIDTH + 100;
 let SPAWN_PIPE_ALERT = Const.SCREEN_WIDTH;
 let MAX_PIPE_CHECK_COLLISION = 3;
 
-let _pipeList = [];
+let _pipeList: Pipe[] = [];
 let _socket = null;
 
-inherits(PipeManager, EventEmitter);
-
-export default class PipeManager {
-  constructor() {
-    EventEmitter.call(this);
-  }
-
-  setSocket(socket) {
+export default class PipeManager extends EventEmitter {
+  setSocket(socket: any) {
     _socket = socket;
   }
 
@@ -29,17 +22,18 @@ export default class PipeManager {
       lastPos = _pipeList[_pipeList.length - 1].getPipeObject().posX;
 
     newPipe = new Pipe(lastPos);
+
     _pipeList.push(newPipe);
 
     return newPipe;
   }
 
-  updatePipes(time) {
+  updatePipes(time: number) {
     let nbPipes = _pipeList.length;
     let i;
 
     // If the first pipe is out of the screen, erase it
-    if (_pipeList[0].canBeDroped()) {
+    if (_pipeList[0].canBeDropped()) {
       _pipeList.shift();
       nbPipes--;
     }
