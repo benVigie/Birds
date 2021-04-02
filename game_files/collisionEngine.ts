@@ -1,7 +1,8 @@
-var Const = require("../sharedConstants").constant;
+import { constants as Const } from "../constants";
+import { Bird, Pipe } from "../shared";
 
-function checkBirdCollision(pipe, birdInstance) {
-  var bird = birdInstance.getPlayerObject();
+function checkBirdCollision(pipe: Pipe, birdInstance: Bird) {
+  const bird = birdInstance.getPlayerObject();
 
   // If the bird is inside a pipe on the X axis, check if he touch it
   if (
@@ -27,14 +28,13 @@ function checkBirdCollision(pipe, birdInstance) {
   return bird.posY + Const.BIRD_HEIGHT > bird.floor;
 }
 
-exports.checkCollision = function (pipe, birdsList) {
-  var thereIsCollision = false,
-    pipeLength = pipe.length,
-    birdLength = birdsList.length,
-    i,
-    j;
+export function checkCollision(pipe: Pipe[], birdsList: Bird[]) {
+  let thereIsCollision = false;
 
-  for (i = 0; i < pipeLength; i++) {
+  let i;
+  let j;
+
+  for (i = 0; i < pipe.length; i++) {
     for (j = 0; j < birdsList.length; j++) {
       if (checkBirdCollision(pipe[i], birdsList[j]) == true) {
         // Change player state to died
@@ -46,4 +46,4 @@ exports.checkCollision = function (pipe, birdsList) {
   }
 
   return thereIsCollision;
-};
+}
