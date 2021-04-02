@@ -1,7 +1,7 @@
 import { constants as Const } from "../constants";
 
 export default class Pipe {
-  private _pipeTinyObject: {
+  private readonly _pipeTinyObject: {
     id: number;
     posX: number;
     posY: number;
