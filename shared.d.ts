@@ -1,11 +1,11 @@
-export enum PlayerState {
+export enum PlayerStateEnum {
   OnLoginScreen = 1,
   WaitingInLobby = 2,
   Playing = 3,
   Died = 4,
 }
 
-export enum ServerState {
+export enum ServerStateEnum {
   WaitingForPlayers = 1,
   OnGame = 2,
   Ranking = 3,
@@ -21,7 +21,7 @@ type PlayerTinyObject = {
   posY: number;
   rotation: number;
   score: number;
-  state: PlayerState.OnLoginScreen;
+  state: PlayerStateEnum.OnLoginScreen;
 };
 
 export type Bird = {
