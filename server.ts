@@ -2,8 +2,7 @@ import express from "express";
 import mustacheExpress from "mustache-express";
 import path from "path";
 import { constants as Const } from "./constants";
-
-// import game from "./game_files/game";
+import { startServer } from "./game_files/game";
 
 const app = express();
 
@@ -36,4 +35,4 @@ app.listen(app.get("PORT"), () => {
   console.log(`🐦 [server]: listening at ${app.get("PORT")}`);
 });
 
-// game.startServer();
+startServer();
