@@ -35,7 +35,7 @@ app.get("/birds", (req, res) =>
 /**
  * Setup
  */
-app.set("port", Const.SERVER_PORT);
+app.set("PORT", Const.SERVER_PORT);
 
 app.listen(app.get("PORT"), () => {
   console.log(`🐦 [server]: listening at ${app.get("PORT")}`);
