@@ -1,12 +1,12 @@
 /**
  * Module dependencies.
  */
-var express = require("express"),
-  routes = require("./routes"),
-  http = require("http"),
-  path = require("path"),
-  Const = require("./sharedConstants").constant,
-  game = require("./game_files/game");
+var express = require("express");
+var routes = require("./routes");
+var http = require("http");
+var path = require("path");
+var Const = require("./sharedConstants").constant;
+var game = require("./game_files/game");
 
 var app = express();
 
