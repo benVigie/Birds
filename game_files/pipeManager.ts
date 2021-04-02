@@ -47,15 +47,9 @@ export default class PipeManager extends EventEmitter {
   }
 
   getPipeList() {
-    let pipes = [];
-    let nbPipes = _pipeList.length;
-    let i;
-
-    for (i = 0; i < nbPipes; i++) {
-      pipes.push(_pipeList[i].getPipeObject());
-    }
-
-    return pipes;
+    return _pipeList.map(function (pipe) {
+      pipe.getPipeObject()
+    })
   }
 
   getPotentialPipeHit() {
