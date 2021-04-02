@@ -1,36 +1,31 @@
-const PlayersManager = require('./playersManager'),
-    PipeManager = require('./pipeManager'),
-    CollisionEngine = require('./collisionEngine'),
-    enums = require('./enums'),
-    Const = require('../sharedConstants').constant;
+const PlayersManager = require("./playersManager"),
+  PipeManager = require("./pipeManager"),
+  CollisionEngine = require("./collisionEngine"),
+  enums = require("./enums"),
+  Const = require("../sharedConstants").constant;
 
 let _playersManager,
-    _pipeManager,
-    io,
-    _gameState,
-    _timeStartGame,
-    _lastTime = null;
-
+  _pipeManager,
+  io,
+  _gameState,
+  _timeStartGame,
+  _lastTime = null;
 
 // @TODO extend here with room id, then move all the above into array
-function playerLog (socket, nick, floor) {
+function playerLog(socket, nick, floor) {
   // Retreive PlayerInstance
-  socket.get('PlayerInstance', function (error, player) {
-
-    if (error)
-      console.error(error);
+  socket.get("PlayerInstance", function (error, player) {
+    if (error) console.error(error);
     else {
-
       // Bind new client events
-      socket.on('change_ready_state', function (readyState) {
-        
+      socket.on("change_ready_state", function (readyState) {
         // If the server is currently waiting for players, update ready state
         if (_gameState === enums.ServerState.WaitingForPlayers) {
           _playersManager.changeLobbyState(player, readyState);
-          socket.broadcast.emit('player_ready_state', player.getPlayerObject());
+          socket.broadcast.emit("player_ready_state", player.getPlayerObject());
         }
       });
-      socket.on('player_jump', function () {
+      socket.on("player_jump", function () {
         player.jump();
       });
 
@@ -38,39 +33,37 @@ function playerLog (socket, nick, floor) {
       _playersManager.prepareNewPlayer(player, nick, floor);
 
       // Notify new client about other players AND notify other about the new one ;)
-      socket.emit('player_list', _playersManager.getPlayerList());
-      socket.broadcast.emit('new_player', player.getPlayerObject());
+      socket.emit("player_list", _playersManager.getPlayerList());
+      socket.broadcast.emit("new_player", player.getPlayerObject());
     }
   });
 }
 
-function updateGameState (newState, notifyClients) {
-  var log = '\t[SERVER] Game state changed ! Server is now ';
-  
+function updateGameState(newState, notifyClients) {
+  var log = "\t[SERVER] Game state changed ! Server is now ";
+
   _gameState = newState;
   switch (_gameState) {
     case enums.ServerState.WaitingForPlayers:
-      log += 'in lobby waiting for players'
+      log += "in lobby waiting for players";
       break;
     case enums.ServerState.OnGame:
-      log += 'in game !'
+      log += "in game !";
       break;
     case enums.ServerState.Ranking:
-      log += 'displaying ranking'
+      log += "displaying ranking";
       break;
     default:
-      log += 'dead :p'
+      log += "dead :p";
   }
   console.info(log);
 
   // If requested, inform clients qbout the chsnge
-  if (notifyClients)
-    io.sockets.emit('update_game_state', _gameState);
+  if (notifyClients) io.sockets.emit("update_game_state", _gameState);
 }
 
-function createNewGame () {
-  let players,
-      i;
+function createNewGame() {
+  let players, i;
 
   // Flush pipe list
   _pipeManager.flushPipeList();
@@ -78,7 +71,7 @@ function createNewGame () {
   // Reset players state and send it
   players = _playersManager.resetPlayersForNewGame();
   for (i = 0; i < players.length; i++) {
-    io.sockets.emit('player_ready_state', players[i]);
+    io.sockets.emit("player_ready_state", players[i]);
   }
 
   // Notify players of the new game state
@@ -100,7 +93,7 @@ function gameOver() {
   setTimeout(createNewGame, Const.TIME_BETWEEN_GAMES);
 }
 
-function startGameLoop () {
+function startGameLoop() {
   // Change server state
   updateGameState(enums.ServerState.OnGame, true);
 
@@ -108,21 +101,20 @@ function startGameLoop () {
   _pipeManager.newPipe();
 
   // Start timer
-  _timer = setInterval(function() {
+  _timer = setInterval(function () {
     var now = new Date().getTime(),
-        ellapsedTime = 0,
-        plList;
+      ellapsedTime = 0,
+      plList;
 
     // get time difference between the last call and now
     if (_lastTime) {
       ellapsedTime = now - _lastTime;
-    }
-    else {
+    } else {
       _timeStartGame = now;
     }
 
     _lastTime = now;
-    
+
     // If everyone has quit the game, exit it
     if (_playersManager.getNumberOfPlayers() === 0) {
       gameOver();
@@ -135,63 +127,69 @@ function startGameLoop () {
     _pipeManager.updatePipes(ellapsedTime);
 
     // Check collisions
-    if (CollisionEngine.checkCollision(_pipeManager.getPotentialPipeHit(), _playersManager.getPlayerList(enums.PlayerState.Playing))) {
+    if (
+      CollisionEngine.checkCollision(
+        _pipeManager.getPotentialPipeHit(),
+        _playersManager.getPlayerList(enums.PlayerState.Playing)
+      )
+    ) {
       if (!_playersManager.arePlayersStillAlive()) {
         gameOver();
       }
     }
 
     // Notify players
-    io.sockets.emit('game_loop_update', { players: _playersManager.getOnGamePlayerList(), pipes: _pipeManager.getPipeList()});
-
+    io.sockets.emit("game_loop_update", {
+      players: _playersManager.getOnGamePlayerList(),
+      pipes: _pipeManager.getPipeList(),
+    });
   }, 1000 / 60);
 }
 
-
 exports.startServer = function () {
-  io = require('socket.io').listen(Const.SOCKET_PORT);
-  io.configure(function(){
-    io.set('log level', 2);
+  io = require("socket.io").listen(Const.SOCKET_PORT);
+  io.configure(function () {
+    io.set("log level", 2);
   });
 
   _gameState = enums.ServerState.WaitingForPlayers;
-  
+
   // Create playersManager instance and register events
   _playersManager = new PlayersManager();
-  _playersManager.on('players-ready', function () {
+  _playersManager.on("players-ready", function () {
     startGameLoop();
   });
 
   // Create pipe manager and bind event
   _pipeManager = new PipeManager();
-  _pipeManager.on('need_new_pipe', function () {
+  _pipeManager.on("need_new_pipe", function () {
     // Create a pipe and send it to clients
     var pipe = _pipeManager.newPipe();
   });
 
   // On new client connection
-  io.sockets.on('connection', function (socket) {
-
+  io.sockets.on("connection", function (socket) {
     // Add new player
     var player = _playersManager.addNewPlayer(socket, socket.id);
-    
+
     // Register to socket events
-    socket.on('disconnect', function () {
-      socket.get('PlayerInstance', function (error, player) {
+    socket.on("disconnect", function () {
+      socket.get("PlayerInstance", function (error, player) {
         _playersManager.removePlayer(player);
-        socket.broadcast.emit('player_disconnect', player.getPlayerObject());
+        socket.broadcast.emit("player_disconnect", player.getPlayerObject());
         player = null;
       });
     });
-    socket.on('say_hi', function (nick, floor, fn) {
+    socket.on("say_hi", function (nick, floor, fn) {
       fn(_gameState, player.getID());
       playerLog(socket, nick, floor);
     });
 
     // Remember PlayerInstance and push it to the player list
-    socket.set('PlayerInstance', player);
+    socket.set("PlayerInstance", player);
   });
-  
 
-  console.log('Game started and waiting for players on port ' + Const.SOCKET_PORT);
+  console.log(
+    "Game started and waiting for players on port " + Const.SOCKET_PORT
+  );
 };

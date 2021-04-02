@@ -1,17 +1,17 @@
-var util          = require('util'),
-    EventEmitter  = require('events').EventEmitter,
-    Pipe          = require('./pipe'),
-    enums         = require('./enums'),
-    Const         = require('../sharedConstants').constant;
+var util = require("util"),
+  EventEmitter = require("events").EventEmitter,
+  Pipe = require("./pipe"),
+  enums = require("./enums"),
+  Const = require("../sharedConstants").constant;
 
-var FIRST_PIPE_POSX           = Const.SCREEN_WIDTH + 100;
-var SPAWN_PIPE_ALERT          = Const.SCREEN_WIDTH;
-var MAX_PIPE_CHECK_COLLISION  = 3;
+var FIRST_PIPE_POSX = Const.SCREEN_WIDTH + 100;
+var SPAWN_PIPE_ALERT = Const.SCREEN_WIDTH;
+var MAX_PIPE_CHECK_COLLISION = 3;
 
 var _pipeList = [],
-    _socket = null;
+  _socket = null;
 
-function PipeManager () {
+function PipeManager() {
   EventEmitter.call(this);
 }
 
@@ -23,7 +23,7 @@ PipeManager.prototype.setSocket = function (socket) {
 
 PipeManager.prototype.newPipe = function () {
   var newPipe,
-      lastPos = FIRST_PIPE_POSX;
+    lastPos = FIRST_PIPE_POSX;
 
   if (_pipeList.length > 0)
     lastPos = _pipeList[_pipeList.length - 1].getPipeObject().posX;
@@ -31,12 +31,12 @@ PipeManager.prototype.newPipe = function () {
   newPipe = new Pipe(lastPos);
   _pipeList.push(newPipe);
 
-  return (newPipe);
+  return newPipe;
 };
 
 PipeManager.prototype.updatePipes = function (time) {
   var nbPipes = _pipeList.length,
-      i;
+    i;
 
   // If the first pipe is out of the screen, erase it
   if (_pipeList[0].canBeDroped()) {
@@ -49,41 +49,39 @@ PipeManager.prototype.updatePipes = function (time) {
   }
 
   if (_pipeList[nbPipes - 1].getPipeObject().posX < SPAWN_PIPE_ALERT)
-    this.emit('need_new_pipe');
+    this.emit("need_new_pipe");
 };
 
 PipeManager.prototype.getPipeList = function () {
   let pipes = [],
-      nbPipes = _pipeList.length,
-      i;
-
-  for (i = 0; i < nbPipes; i++) {
-      pipes.push(_pipeList[i].getPipeObject());
-  }
-
-  return (pipes);
-};
-
-PipeManager.prototype.getPotentialPipeHit = function () {
-  let pipes = [],
-      nbPipes = _pipeList.length,
-      i;
-
-  // In multiplayer mode, just check the first 2 pipes
-  // because the other ones are too far from the players
-  if (nbPipes > MAX_PIPE_CHECK_COLLISION)
-    nbPipes = MAX_PIPE_CHECK_COLLISION;
+    nbPipes = _pipeList.length,
+    i;
 
   for (i = 0; i < nbPipes; i++) {
     pipes.push(_pipeList[i].getPipeObject());
   }
 
-  return (pipes);
+  return pipes;
+};
+
+PipeManager.prototype.getPotentialPipeHit = function () {
+  let pipes = [],
+    nbPipes = _pipeList.length,
+    i;
+
+  // In multiplayer mode, just check the first 2 pipes
+  // because the other ones are too far from the players
+  if (nbPipes > MAX_PIPE_CHECK_COLLISION) nbPipes = MAX_PIPE_CHECK_COLLISION;
+
+  for (i = 0; i < nbPipes; i++) {
+    pipes.push(_pipeList[i].getPipeObject());
+  }
+
+  return pipes;
 };
 
 PipeManager.prototype.flushPipeList = function () {
   _pipeList = [];
 };
-
 
 module.exports = PipeManager;

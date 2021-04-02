@@ -1,9 +1,8 @@
 // Define all constants usefull by the server and the client
 const constant = {
-
   SERVER_PORT: 4242,
   SOCKET_PORT: 1337,
-  SOCKET_ADDR: 'http://localhost',
+  SOCKET_ADDR: "http://localhost",
 
   SCREEN_WIDTH: 900,
   SCREEN_HEIGHT: 768,
@@ -19,11 +18,11 @@ const constant = {
   DISTANCE_BETWEEN_PIPES: 380,
   MIN_PIPE_HEIGHT: 60,
   MAX_PIPE_HEIGHT: 630,
-  HEIGHT_BETWEEN_PIPES: 150
+  HEIGHT_BETWEEN_PIPES: 150,
 };
 
 // To be use by the server part, we have to provide the object with exports
-if (typeof exports != 'undefined') {
+if (typeof exports != "undefined") {
   exports.constant = constant;
 }
 // Else provide the const object to require.js with define()
