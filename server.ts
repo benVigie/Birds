@@ -1,14 +1,9 @@
 import express from "express";
-import path from "path";
 import mustacheExpress from "mustache-express";
+import path from "path";
+import { constants as Const } from "./constants";
 
 // import game from "./game_files/game";
-
-const Const = {
-  SERVER_PORT: 4242,
-  SOCKET_PORT: 1337,
-  SOCKET_ADDR: "http://localhost",
-};
 
 const app = express();
 
