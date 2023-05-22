@@ -6,6 +6,7 @@ var fs = require('fs');
 var express = require('express'),
 	routes 	= require('./routes'),
 	http 	= require('http'),
+	https = require('https'),
 	path 	= require('path'),
 	Const   = require('./sharedConstants').constant,
 	
@@ -39,12 +40,21 @@ app.get('/sharedConstants.js', function(req, res) {
     res.sendfile('sharedConstants.js');
 });
 
-http.createServer({
+
+const credentials = {
 	key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
 	cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
-},
-app).listen(app.get('port'), function(){
+};
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
+});
+
+httpsServer.listen(443, function(){
+  console.log('Express https server listening on port ' + 443);
 });
 
 game.startServer();
