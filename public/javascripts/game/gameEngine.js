@@ -74,7 +74,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
   function startClient () {
     if (typeof io == 'undefined') {
-      document.getElementById('gs-error-message').innerHTML = 'Cannot retreive socket.io file at the address ' + Const.SOCKET_ADDR + '<br/><br/>Please provide a valid address.';
+      document.getElementById('gs-error-message').innerHTML = 'Cannot retrieve socket.io file at the address ' + Const.SOCKET_ADDR + '<br/><br/>Please provide a valid address.';
       showHideMenu(enumPanels.Error, true);
       console.log('Cannot reach socket.io file !');
       return;

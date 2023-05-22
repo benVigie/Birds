@@ -3,7 +3,7 @@ var constant = {
 
   SERVER_PORT:              80,
   SOCKET_PORT:              1337,
-  SOCKET_ADDR:              'http://www.flappycoop.com',
+  SOCKET_ADDR:              'https://www.flappycoop.com',
 
   SCREEN_WIDTH:             900,
   SCREEN_HEIGHT:            768,
