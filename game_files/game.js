@@ -1,15 +1,15 @@
-const https = require("https");
+// const https = require("https");
 const { Server } = require("socket.io");
-const fs = require('fs');
+// const fs = require('fs');
 
-const credentials = {
-	// key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
-	// cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
-	key: fs.readFileSync("privkey.pem"),
-	cert: fs.readFileSync("fullchain.pem"),
-};
+// const credentials = {
+// 	// key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
+// 	// cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+// 	key: fs.readFileSync("privkey.pem"),
+// 	cert: fs.readFileSync("fullchain.pem"),
+// };
 
-var httpsServer = https.createServer(credentials);
+// var httpsServer = https.createServer(credentials);
 
 var PlayersManager    = require('./playersManager'),
     PipeManager       = require('./pipeManager'),
@@ -163,7 +163,7 @@ function startGameLoop () {
 }
 
 
-exports.startServer = function () {
+exports.startServer = function (httpsServer) {
   var io = require('socket.io')(httpsServer);
   // io.configure(function(){
   //   io.set('log level', 2);

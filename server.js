@@ -55,8 +55,10 @@ httpServer.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+game.startServer(httpsServer);
+
+
 httpsServer.listen(443, function(){
   console.log('Express https server listening on port ' + 443);
 });
 
-game.startServer();
