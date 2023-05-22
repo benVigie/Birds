@@ -27,7 +27,10 @@ var _playersManager,
 
 function playerLog (socket, nick) {
   // Retreive PlayerInstance
-  socket.get('PlayerInstance', function (error, player) {
+  const player = socket.PlayerInstance;
+
+
+  // socket.get('PlayerInstance', function (error, player) {
 
     if (error)
       console.error(error);
@@ -53,7 +56,7 @@ function playerLog (socket, nick) {
       socket.emit('player_list', _playersManager.getPlayerList());
       socket.broadcast.emit('new_player', player.getPlayerObject());
     }
-  });
+  // });
 }
 
 function updateGameState (newState, notifyClients) {
@@ -193,6 +196,11 @@ exports.startServer = function (httpsServer) {
     // Register to socket events
     socket.on('disconnect', function () {
       // FIXME
+      const player = socket.PlayerInstance;
+      _playersManager.removePlayer(player);
+      socket.broadcast.emit('player_disconnect', player.getPlayerObject());
+      player = null;
+
       // socket.get('PlayerInstance', function (error, player) {
       //   _playersManager.removePlayer(player);
       //   socket.broadcast.emit('player_disconnect', player.getPlayerObject());
@@ -206,6 +214,7 @@ exports.startServer = function (httpsServer) {
 
     // Remember PlayerInstance and push it to the player list
     // socket.set('PlayerInstance', player);
+    socket.PlayerInstance = player;
   });
   
 
