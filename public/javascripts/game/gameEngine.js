@@ -1,6 +1,9 @@
 /*
 *   Game Engine
 */
+const { io } = require("socket.io-client");
+
+
 require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (canvasPainter, PlayersManager, Const) {
 
   var enumState = {
@@ -73,7 +76,6 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
 
   function startClient () {
-    const { io } = require("socket.io-client");
 
     
     if (typeof io == 'undefined') {
