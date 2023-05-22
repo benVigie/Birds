@@ -7,7 +7,7 @@ const credentials = {
 	cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
 };
 
-var httpsServer = https.createServer(credentials, app);
+var httpsServer = https.createServer(credentials);
 
 var PlayersManager    = require('./playersManager'),
     PipeManager       = require('./pipeManager'),
