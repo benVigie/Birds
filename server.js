@@ -42,8 +42,10 @@ app.get('/sharedConstants.js', function(req, res) {
 
 
 const credentials = {
-	key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
-	cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+	// key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
+	// cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+	key: fs.readFileSync("privkey.pem"),
+	cert: fs.readFileSync("fullchain.pem"),
 };
 
 var httpServer = http.createServer(app);

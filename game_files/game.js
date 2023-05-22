@@ -3,8 +3,10 @@ const { Server } = require("socket.io");
 const fs = require('fs');
 
 const credentials = {
-	key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
-	cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+	// key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
+	// cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+	key: fs.readFileSync("privkey.pem"),
+	cert: fs.readFileSync("fullchain.pem"),
 };
 
 var httpsServer = https.createServer(credentials);
@@ -162,10 +164,10 @@ function startGameLoop () {
 
 
 exports.startServer = function () {
-  io = new Server(httpsServer)
-  io.configure(function(){
-    io.set('log level', 2);
-  });
+  var io = require('socket.io')(httpsServer);
+  // io.configure(function(){
+  //   io.set('log level', 2);
+  // });
 
   _gameState = enums.ServerState.WaitingForPlayers;
   
