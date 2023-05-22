@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 var fs = require('fs');
+require('dotenv').config()
 
 var express = require('express'),
 	routes 	= require('./routes'),
@@ -55,7 +56,11 @@ httpServer.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-game.startServer(httpsServer);
+if (process.env.NODE_ENV === 'development') {
+	game.startServer(httpServer);
+} else {
+	game.startServer(httpsServer);
+}
 
 
 httpsServer.listen(443, function(){
