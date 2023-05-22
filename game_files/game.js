@@ -32,8 +32,9 @@ function playerLog (socket, nick) {
 
   // socket.get('PlayerInstance', function (error, player) {
 
-    if (error)
-      console.error(error);
+    if (!player)
+      console.error('socket.PlayerInstance not defined!');
+      
     else {
 
       // Bind new client events
