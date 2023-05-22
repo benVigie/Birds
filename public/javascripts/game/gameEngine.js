@@ -85,8 +85,8 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
     const { io } = require("socket.io-client");
 
-    _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { secure: true, reconnect: false });
-    _socket = io("ws://flappycoop.com:" + Const.SOCKET_PORT);
+    // _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { secure: true, reconnect: false });
+    _socket = io("ws://www.flappycoop.com:" + Const.SOCKET_PORT);
 
     _socket.on('connect', function() {
       
