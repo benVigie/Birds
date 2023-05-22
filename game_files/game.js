@@ -1,6 +1,6 @@
 const https = require("https");
 const { Server } = require("socket.io");
-
+const fs = require('fs');
 
 const credentials = {
 	key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
