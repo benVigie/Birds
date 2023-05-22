@@ -1,6 +1,8 @@
 /**
  * Module dependencies.
  */
+var fs = requrire('fs');
+
 var express = require('express'),
 	routes 	= require('./routes'),
 	http 	= require('http'),
