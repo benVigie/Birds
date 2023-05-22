@@ -202,7 +202,7 @@ exports.startServer = function (httpsServer) {
       const player = socket.PlayerInstance;
       _playersManager.removePlayer(player);
       socket.broadcast.emit('player_disconnect', player.getPlayerObject());
-      player = null;
+      socket.PlayerInstance = null;
 
       // socket.get('PlayerInstance', function (error, player) {
       //   _playersManager.removePlayer(player);
