@@ -59,11 +59,16 @@ PlayersManager.prototype.changeLobbyState = function (player, isReady) {
   }
 
   // PlayersManager check if players are ready
+  let oneReady = false;
+
   for (i = 0; i < nbPlayers; i++) {
     // if at least one player doesn't ready, return
-    if (_playersList[i].getState() == enums.PlayerState.WaitingInLobby) {
-      console.info(_playersList[i].getNick() + " is not yet ready, don't start game");
-      return;
+    if (_playersList[i].getState() === enums.PlayerState.Ready) {
+      console.info(_playersList[i].getNick() + " is ready, starting");
+      oneReady = true;
+      break;
+      // console.info(_playersList[i].getNick() + " is not yet ready, don't start game");
+      // return;
     }
   };
 
