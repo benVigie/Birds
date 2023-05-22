@@ -1,5 +1,7 @@
 // const https = require("https");
 const { Server } = require("socket.io");
+var io;
+
 // const fs = require('fs');
 
 // const credentials = {
@@ -34,7 +36,7 @@ function playerLog (socket, nick) {
 
     if (!player)
       console.error('socket.PlayerInstance not defined!');
-      
+
     else {
 
       // Bind new client events
@@ -168,7 +170,7 @@ function startGameLoop () {
 
 
 exports.startServer = function (httpsServer) {
-  var io = require('socket.io')(httpsServer);
+  io = require('socket.io')(httpsServer);
   // io.configure(function(){
   //   io.set('log level', 2);
   // });
