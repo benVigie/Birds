@@ -37,7 +37,11 @@ app.get('/sharedConstants.js', function(req, res) {
     res.sendfile('sharedConstants.js');
 });
 
-http.createServer(app).listen(app.get('port'), function(){
+http.createServer({
+	key: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/privkey.pem"),
+	cert: fs.readFileSync("/etc/letsencrypt/live/flappycoop.com/fullchain.pem"),
+},
+app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
