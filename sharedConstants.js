@@ -1,9 +1,9 @@
 // Define all constants usefull by the server and the client
 var constant = {
 
-  SERVER_PORT:              4242,
+  SERVER_PORT:              80,
   SOCKET_PORT:              1337,
-  SOCKET_ADDR:              'http://localhost',
+  SOCKET_ADDR:              'http://www.flappycoop.com',
 
   SCREEN_WIDTH:             900,
   SCREEN_HEIGHT:            768,
