@@ -192,11 +192,12 @@ exports.startServer = function (httpsServer) {
     
     // Register to socket events
     socket.on('disconnect', function () {
-      socket.get('PlayerInstance', function (error, player) {
-        _playersManager.removePlayer(player);
-        socket.broadcast.emit('player_disconnect', player.getPlayerObject());
-        player = null;
-      });
+      // FIXME
+      // socket.get('PlayerInstance', function (error, player) {
+      //   _playersManager.removePlayer(player);
+      //   socket.broadcast.emit('player_disconnect', player.getPlayerObject());
+      //   player = null;
+      // });
     });
     socket.on('say_hi', function (nick, fn) {
       fn(_gameState, player.getID());
@@ -204,7 +205,7 @@ exports.startServer = function (httpsServer) {
     });
 
     // Remember PlayerInstance and push it to the player list
-    socket.set('PlayerInstance', player);
+    // socket.set('PlayerInstance', player);
   });
   
 
