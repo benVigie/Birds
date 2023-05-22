@@ -1,10 +1,10 @@
 /*
 *   Game Engine
 */
-const { io } = require("socket.io-client");
+// const { io } = require("socket.io-client");
 
 
-require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (canvasPainter, PlayersManager, Const) {
+require(['socket.io-client', 'canvasPainter', 'playersManager', '../../sharedConstants'], function (io, canvasPainter, PlayersManager, Const) {
 
   var enumState = {
     Login: 0,
