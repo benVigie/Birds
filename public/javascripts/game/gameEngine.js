@@ -83,7 +83,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     _playerManager = new PlayersManager();
 
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
-    _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { reconnect: false });
+    _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { secure: true, reconnect: false });
     _socket.on('connect', function() {
       
       console.log('Connection established :)');
