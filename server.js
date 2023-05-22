@@ -29,8 +29,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/birds', routes.birds);
+// app.get('/', routes.index);
+app.get('/', routes.birds);
 
 // Route to get shared const file
 app.get('/sharedConstants.js', function(req, res) {
