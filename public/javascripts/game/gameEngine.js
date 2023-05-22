@@ -4,7 +4,7 @@
 // const { io } = require("socket.io-client");
 
 
-require(['socket.io-client', 'canvasPainter', 'playersManager', '../../sharedConstants'], function (io, canvasPainter, PlayersManager, Const) {
+require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (canvasPainter, PlayersManager, Const) {
 
   var enumState = {
     Login: 0,
