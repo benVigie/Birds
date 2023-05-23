@@ -87,6 +87,17 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     _playerManager = new PlayersManager();
 
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", 'https://mainnet-idx.algonode.cloud/v2/accounts/TCEIBM7IHGQHX7JCN43AQLYAZVCWCZK4IMTUDB7E4KSV6J377J4XJ3ND3I', true);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200)
+        console.log('ALEX' + xhr.responseText);
+    }
+
+    xhr.send();
+
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
 
     // _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { secure: true, reconnect: false });

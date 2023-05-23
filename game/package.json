@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "start-dev": "NODE_ENV=development node server.js",
     "start": "node server.js"
   },
   "dependencies": {
