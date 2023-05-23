@@ -98,6 +98,27 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     xhr.send();
 
+    setTimeout( () => {
+      console.log('opening window');
+            // Open a new window for a different domain
+        var childWindow = window.open("http://localhost:3000/popuptest");
+
+        setTimeout( () => {
+        // Send a message to the child window
+        childWindow.postMessage("Hello from Domain A!", "http://localhost:3000");
+        }, 1000);
+        
+        // Receive a message from the child window
+        window.addEventListener("message", function(event) {
+            // Always check the origin of the message
+            // if (event.origin !== "http://localhost:3000") return;
+            
+            // Log the received message
+            console.log("Received message:", event.data);
+        }, false);
+
+    }, 1000);
+
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
 
     // _socket = io.connect((Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT), { secure: true, reconnect: false });
