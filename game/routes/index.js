@@ -9,5 +9,5 @@ exports.index = function(req, res){
 };
 
 exports.birds = function(req, res){
-  res.render('birds', { title: 'Birds.js', wsAddress: Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT });
+  res.render('birds', { title: 'FlappyCoop', wsAddress: Const.SOCKET_ADDR + ':' + Const.SOCKET_PORT });
 };

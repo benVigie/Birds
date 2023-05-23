@@ -107,6 +107,9 @@ canvas {
 	animation: birdFly 300ms steps(3, end) infinite;
 	-webkit-animation: birdFly 300ms steps(2, end) infinite;
 }
+#wallet-connection {
+	width: 200px;
+}
 #gs-loader-text {
 	position: absolute;
 	width: 100%;
@@ -124,6 +127,9 @@ canvas {
 	text-shadow: 5px 0px 0px #40394A, 0px 5px 0px #40394A, -5px 0px 0px #40394A, 0px -5px 0px #40394A;
 }
 
+#player-name {
+	pointer-events: none; 
+}
 #gs-ranking-box,
 #gs-highscores-box {
 	height: 200px;

@@ -98,26 +98,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
 
     xhr.send();
 
-    setTimeout( () => {
-      console.log('opening window');
-            // Open a new window for a different domain
-        var childWindow = window.open("http://localhost:3000/popuptest");
-
-        setTimeout( () => {
-        // Send a message to the child window
-        childWindow.postMessage("Hello from Domain A!", "http://localhost:3000");
-        }, 1000);
-        
-        // Receive a message from the child window
-        window.addEventListener("message", function(event) {
-            // Always check the origin of the message
-            // if (event.origin !== "http://localhost:3000") return;
-            
-            // Log the received message
-            console.log("Received message:", event.data);
-        }, false);
-
-    }, 1000);
+    
 
     document.getElementById('gs-loader-text').innerHTML = 'Connecting to the server...';
 
@@ -138,7 +119,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       // Try to retreive previous player name if exists
       if (typeof sessionStorage != 'undefined') {
         if ('playerName' in sessionStorage) {
-          document.getElementById('player-name').value = sessionStorage.getItem('playerName');
+          // document.getElementById('player-name').value = sessionStorage.getItem('playerName');
         }
       }
       
@@ -146,6 +127,7 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
       draw(0, 0);
       showHideMenu(enumPanels.Login, true);
       document.getElementById('player-connection').onclick = loadGameRoom;
+      document.getElementById('wallet-connection').onclick = openWalletWindow;
   
     });
 
@@ -157,13 +139,39 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
     
   }
 
+  function openWalletWindow () {
+    console.log('opening window');
+          // Open a new window for a different domain
+    var childWindow = window.open("http://localhost:3000/wallet",
+      "_blank", "toolbar=no,scrollbars=yes,resizable=yes,top=200,left=200,width=800,height=600");
+
+    setTimeout( () => {
+    // Send a message to the child window
+    childWindow.postMessage("Hello from Domain A!", "http://localhost:3000");
+    }, 1000);
+
+    // Receive a message from the child window
+    window.addEventListener("message", function(event) {
+        // Always check the origin of the message
+        // if (event.origin !== "http://localhost:3000") return;
+        
+        // Log the received message
+        const walletData = JSON.parse(event.data);
+        const {name, address} = walletData;
+        window.walletName = name;
+        window.walletAddress = address;
+        document.getElementById('player-name').value = name;
+        console.log("Received message:", event.data); 
+    }, false);
+  }
+
   function loadGameRoom () {
     var nick = document.getElementById('player-name').value;
 
     // If nick is empty or if it has the default value, 
     if ((nick == '') || (nick == 'Player_1')) {
-      infoPanel(true, 'Please choose your <strong>name</strong> !', 2000);
-      document.getElementById('player-name').focus();
+      infoPanel(true, 'Please connect your <strong>wallet</strong> !', 2000);
+      // document.getElementById('player-name').focus();
       return (false);
     }
     // Else store it in sessionstorage if available

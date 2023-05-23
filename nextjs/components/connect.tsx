@@ -4,6 +4,9 @@ import { useWallet } from '@txnlab/use-wallet'
 export default function Connect() {
   const { providers, activeAccount } = useWallet()
 
+  if (activeAccount?.address) {
+    
+  }
   // Map through the providers.
   // Render account information and "connect", "set active", and "disconnect" buttons.
   // Finally, map through the `accounts` property to render a dropdown for each connected account.
