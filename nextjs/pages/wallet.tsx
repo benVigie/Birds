@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useWallet } from '@txnlab/use-wallet'
 import Connect from '@/components/connect'
+import axios from 'axios';
+
+interface AddressData {
+  [key: string]: {
+    name: string;
+  }[];
+}
 
 export default function Wallet() {
   const { providers, activeAccount } = useWallet()
@@ -9,11 +16,42 @@ export default function Wallet() {
   const [eventOrigin, setEventOrigin] = useState<string|null>(null);
   
   if (activeAccount?.address && eventSource && eventOrigin) {
-    const data = {
-      address: activeAccount?.address,
-      name: activeAccount?.address.substring(0, 8)
-    }
-    eventSource.postMessage(JSON.stringify(data), eventOrigin);
+    const fetchWalletAndPostMessage = async () => {
+      try {
+        const response = await axios.get<AddressData>(
+          'https://api.nf.domains/nfd/v2/address',
+          {
+            params: {
+              address: 'EIERIRHY3YZITZZUN3E24LDVJUCH3EGYASE5RRCBSPJSBYOYVQKB36WCAE',
+              limit: 1,
+            },
+          }
+        );
+        const addressData = response.data;
+        let name = null;
+
+        if (addressData) {
+          const firstEntry = addressData[Object.keys(addressData)[0]][0];
+          if (firstEntry && firstEntry.name) {
+            name = firstEntry.name;
+          }
+        }
+        
+        const data = {
+          address: activeAccount?.address,
+          name: name ? name : activeAccount?.address.substring(0, 8)
+        }
+        
+        eventSource.postMessage(JSON.stringify(data), eventOrigin);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchWalletAndPostMessage();
+    // https://api.nf.domains/nfd/v2/address?address=EIERIRHY3YZITZZUN3E24LDVJUCH3EGYASE5RRCBSPJSBYOYVQKB36WCAE&limit=1
+    // https://api.nf.domains/nfd/v2/address?address=
+
   }
 
   useEffect(() => {

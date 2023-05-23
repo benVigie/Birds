@@ -140,6 +140,16 @@ require(['canvasPainter', 'playersManager', '../../sharedConstants'], function (
   }
 
   function openWalletWindow () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name');
+
+    if (name) {
+      window.walletName = name;
+      window.walletAddress = name;
+      document.getElementById('player-name').value = name;
+      return;
+    }
+
     console.log('opening window');
           // Open a new window for a different domain
     var childWindow = window.open("http://localhost:3000/wallet",
